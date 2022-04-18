@@ -1,0 +1,172 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Update Ticket on Jira",
+    "aliasName": null,
+    "tag": "#Jira",
+    "description": "Update Jira ticket if its corresponding FortiSOAR alert is updated",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1650264614,
+    "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/abd1a695-582e-4625-8b2f-e915b7cb04ec",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Ticket",
+            "description": null,
+            "arguments": {
+                "name": "Jira",
+                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "params": {
+                    "status": "{{vars.input.records[0].status.itemValue | resolveRange(vars.status_map)}}",
+                    "comment": "SOAR Sync at {{arrow.utcnow().format(\"HH:mm:ss DD\/MM\/YYYY\")}}",
+                    "summary": "SOAR: {{vars.input.records[0].name}}",
+                    "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severity_map)}}",
+                    "issue_key": "{{vars.input.records[0].jiraTicketID}}",
+                    "description": "{%if vars.input.records[0].description%}{{vars.input.records[0].description | html2text}}{%else%}N\/A{%endif%}",
+                    "project_key": "{{vars.Jira_Project_KEY}}",
+                    "other_fields": "{\"duedate\": \"{{arrow.get(vars.input.records[0].dueBy).to(\"UTC\").format(\"YYYY-MM-DD\")}}\"}"
+                },
+                "version": "1.1.1",
+                "connector": "jira",
+                "operation": "update_ticket",
+                "ignore_errors": false,
+                "operationTitle": "Update Ticket",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "0f077488-767e-412f-87fb-e763e5f158bf",
+            "id": 15958
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "alerts",
+                "resources": [
+                    "alerts"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "logic": "OR",
+                            "filters": [
+                                {
+                                    "type": "object",
+                                    "field": "status",
+                                    "value": "",
+                                    "_value": {
+                                        "@id": "",
+                                        "display": "",
+                                        "itemValue": ""
+                                    },
+                                    "operator": "changed"
+                                },
+                                {
+                                    "type": "object",
+                                    "field": "severity",
+                                    "value": "",
+                                    "_value": {
+                                        "@id": "",
+                                        "display": "",
+                                        "itemValue": ""
+                                    },
+                                    "operator": "changed"
+                                },
+                                {
+                                    "type": "primitive",
+                                    "field": "description",
+                                    "value": "",
+                                    "operator": "changed",
+                                    "_operator": "changed"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "jiraTicketID",
+                            "value": "false",
+                            "operator": "isnull",
+                            "_operator": "isnull"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/9300bf69-5063-486d-b3a6-47eb9da24872",
+            "uuid": "abd1a695-582e-4625-8b2f-e915b7cb04ec",
+            "id": 15980
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "status_map": "{\n\"Investigating\":\"In Progress\",\n\"Open\":\"In Progress\",\n\"Re-Opened\":\"In Progress\",\n\"Pending\":\"To Do\",\n\"Closed\":\"Done\"\n}",
+                "severity_map": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
+                "Jira_Project_KEY": "TIC"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "e39eb09b-8b04-4a45-a8f9-120a8435848d",
+            "id": 15979
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Update Ticket",
+            "targetStep": "\/api\/3\/workflow_steps\/0f077488-767e-412f-87fb-e763e5f158bf",
+            "sourceStep": "\/api\/3\/workflow_steps\/e39eb09b-8b04-4a45-a8f9-120a8435848d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5017d85f-059a-4135-9bd5-4fa4a3e55440"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/e39eb09b-8b04-4a45-a8f9-120a8435848d",
+            "sourceStep": "\/api\/3\/workflow_steps\/abd1a695-582e-4625-8b2f-e915b7cb04ec",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0432671e-d75c-4b34-81ce-6f4aa96163aa"
+        }
+    ],
+    "priority": null,
+    "uuid": "787be059-d418-47cf-9b80-fe98f608f02c",
+    "recordTags": [
+        "jira"
+    ],
+    "id": 3073,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1649143702,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1650264614,
+    "owners": [],
+    "isPrivate": false
+}

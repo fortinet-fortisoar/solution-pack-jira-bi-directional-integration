@@ -1,0 +1,15 @@
+{
+    "@context": "\/api\/3\/contexts\/WorkflowCollection",
+    "@type": "WorkflowCollection",
+    "name": "12 - Solution Pack JIRA Bi-directional Integration",
+    "description": null,
+    "visible": true,
+    "image": null,
+    "uuid": "fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "id": 274,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1649143694,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1649143694,
+    "recordTags": []
+}
