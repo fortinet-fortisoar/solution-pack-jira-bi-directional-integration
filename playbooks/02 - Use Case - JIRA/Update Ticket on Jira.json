@@ -20,9 +20,9 @@
             "name": "Configuration",
             "description": null,
             "arguments": {
-                "status_map": "{\n\"Investigating\":\"Work in progress\",\n\"Open\":\"Open\",\n\"Re-Opened\":\"Reopened\",\n\"Pending\":\"Pending\",\n\"Closed\":\"Done\"\n}",
-                "severity_map": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
-                "Jira_Project_KEY": "FSR"
+                "statusMap": "{\n\"Investigating\":\"Work in progress\",\n\"Open\":\"Open\",\n\"Re-Opened\":\"Reopened\",\n\"Pending\":\"Pending\",\n\"Closed\":\"Done\"\n}",
+                "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
+                "jiraProjectKEY": "FSR"
             },
             "status": null,
             "top": "165",
@@ -112,14 +112,14 @@
                 "name": "Jira",
                 "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
                 "params": {
-                    "status": "{{vars.input.records[0].status.itemValue | resolveRange(vars.status_map)}}",
+                    "status": "{{vars.input.records[0].status.itemValue | resolveRange(vars.statusMap)}}",
                     "comment": "SOAR Sync at {{arrow.utcnow().format(\"HH:mm:ss DD\/MM\/YYYY\")}}",
                     "summary": "SOAR: {{vars.input.records[0].name}}",
-                    "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severity_map)}}",
+                    "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severityMap)}}",
                     "issue_key": "{{vars.input.records[0].jiraTicketID}}",
                     "description": "{%if vars.input.records[0].description%}{{vars.input.records[0].description | html2text}}{%else%}N\/A{%endif%}",
-                    "project_key": "{{vars.Jira_Project_KEY}}",
-                    "other_fields": ""
+                    "project_key": "{{vars.jiraProjectKEY}}",
+                    "other_fields": "{% if vars.input.records[0].dueBy %}{\"duedate\": \"{{arrow.get(vars.input.records[0].dueBy).to(\"UTC\").format(\"YYYY-MM-DD\")}}\"}{% endif %}"
                 },
                 "version": "1.1.1",
                 "connector": "jira",

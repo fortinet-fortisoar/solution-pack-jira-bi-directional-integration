@@ -41,7 +41,7 @@
                     "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severityMap)}}",
                     "issue_type": "Task",
                     "project_key": "{{vars.jiraProjectKEY}}",
-                    "other_fields": "",
+                    "other_fields": "{\u201ccustomfield_10015\": \"{{arrow.get(vars.input.records[0].createDate).to(\"UTC\").format(\"YYYY-MM-DDTHH:mm:ss.SSSZZ\")}}\"}",
                     "ticket_summary": "SOAR: {{vars.input.records[0].name}}",
                     "ticket_description": "{%if vars.input.records[0].description%}{{vars.input.records[0].description | html2text}}{%else%}N\/A{%endif%}"
                 },

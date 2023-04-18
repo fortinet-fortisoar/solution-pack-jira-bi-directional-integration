@@ -19,7 +19,7 @@
     "supportInfo": null,
     "iconLarge": null,
     "postInstallConfig": null,
-    "date": "2023-04-18T13:11:12+00:00",
+    "date": "2023-04-18T15:25:59+00:00",
     "contents": {
         "modules": {
             "": {
@@ -29,7 +29,7 @@
         },
         "playbooks": [
             {
-                "name": "02 - Use Case JIRA"
+                "name": "02 - Use Case - JIRA"
             }
         ],
         "globalVariables": [],
