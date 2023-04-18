@@ -1,0 +1,44 @@
+{
+    "name": "jira",
+    "version": "1.0.0",
+    "fsrMinCompatibility": "7.3.0",
+    "type": "solutionpack",
+    "local": true,
+    "label": "Jira",
+    "dependencies": [],
+    "prerequisite": null,
+    "publisher": "Community",
+    "description": "This solution pack is aimed at organizations whom prefer to keep SOC incident management on JIRA while leveraging the automation and orchestration capability of FortiSOAR.",
+    "help": "https://github.com/fortinet-fortisoar/solution-pack-jira-bi-directional-integration/blob/release/1.0.0/docs/README.md",
+    "category": [
+        "Monitoring",
+        "IT Services",
+        "Ticket Creation",
+        "Ticket Management"
+    ],
+    "supportInfo": null,
+    "iconLarge": null,
+    "postInstallConfig": null,
+    "date": "2023-04-18T13:11:12+00:00",
+    "contents": {
+        "modules": {
+            "": {
+                "name": "Alerts",
+                "apiName": "alerts"
+            }
+        },
+        "playbooks": [
+            {
+                "name": "02 - Use Case JIRA"
+            }
+        ],
+        "globalVariables": [],
+        "playbookBlocks": [],
+        "connectors": [
+            {
+                "name": "Jira",
+                "apiName": "jira"
+            }
+        ]
+    }
+}

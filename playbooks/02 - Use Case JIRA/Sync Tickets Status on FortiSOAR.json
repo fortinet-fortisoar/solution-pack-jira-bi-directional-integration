@@ -1,0 +1,233 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Sync Tickets Status on FortiSOAR",
+    "aliasName": null,
+    "tag": "#Jira",
+    "description": "Close Alert If Ticket is closed on Jira",
+    "isActive": false,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/8c6b0412-5a89-4f76-8522-4f0677499ccc",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Close Alerts",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.alertsToClose | length > 0}}",
+                "for_each": {
+                    "item": "{{vars.alertsToClose}}",
+                    "__bulk": true,
+                    "parallel": false,
+                    "condition": "",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "status": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                    "closureNotes": "Alert closed due to its corresponding ticket closed on Jira",
+                    "closureReason": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.item}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "d4de6a24-7c29-4e52-b349-93ac664b724d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "startAt": "0",
+                "maxResult": "50",
+                "jiraProjectKEY": "FSR"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "bc0f9ecb-bbbb-4c7e-94e3-8d3f06fd64c2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Find Alerts",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "jiraTicketID",
+                            "value": "{{vars.ticketsToClose}}",
+                            "operator": "in",
+                            "_operator": "in"
+                        }
+                    ],
+                    "__selectFields": [
+                        "id",
+                        "jiraTicketID"
+                    ]
+                },
+                "module": "alerts?$limit=30",
+                "checkboxFields": true,
+                "step_variables": {
+                    "alertsToClose": "{{vars.result | json_query(\"[][\\\"@id\\\"][]\")}}"
+                }
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "1f25fe11-b424-4cb2-9e47-d34caad2d0ab"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Existing Tickets",
+            "description": null,
+            "arguments": {
+                "name": "Jira",
+                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "params": {
+                    "fields": "",
+                    "status": "",
+                    "startAt": "{{vars.startAt}}",
+                    "maxResults": "{{vars.maxResult}}",
+                    "project_key": "{{vars.jiraProjectKEY}}"
+                },
+                "version": "1.1.1",
+                "connector": "jira",
+                "operation": "list_tickets",
+                "operationTitle": "List Tickets",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "__dummy": "{% for entry in vars.result.data.issues %}{% if entry.fields.status.name == 'Done' %}{{vars.ticketsToClose.append(entry.id)}}{% endif %}{% endfor %}",
+                    "ticketsFound": "{{vars.result.data.issues}}"
+                }
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "df8780f6-3ddf-48d1-9e45-028897653a95"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "e1d62bba-b427-4cac-9afe-8e7be3c673a6",
+                "title": "Jira: Close Alerts",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    },
+                    "ticketsToClose": "[]"
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    },
+                    "incidents": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "8c6b0412-5a89-4f76-8522-4f0677499ccc"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Existing Tickets",
+            "targetStep": "\/api\/3\/workflow_steps\/df8780f6-3ddf-48d1-9e45-028897653a95",
+            "sourceStep": "\/api\/3\/workflow_steps\/bc0f9ecb-bbbb-4c7e-94e3-8d3f06fd64c2",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "ed4d2e72-3376-4cb6-82a8-e9a5fc5dcaed"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Find Alerts -> Close Alerts",
+            "targetStep": "\/api\/3\/workflow_steps\/d4de6a24-7c29-4e52-b349-93ac664b724d",
+            "sourceStep": "\/api\/3\/workflow_steps\/1f25fe11-b424-4cb2-9e47-d34caad2d0ab",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "b5361bd1-d3cf-4bdc-853f-3b8f2137fbc2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Existing Tickets -> Find Alerts",
+            "targetStep": "\/api\/3\/workflow_steps\/1f25fe11-b424-4cb2-9e47-d34caad2d0ab",
+            "sourceStep": "\/api\/3\/workflow_steps\/df8780f6-3ddf-48d1-9e45-028897653a95",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "b8770617-3aea-4cf0-9127-dd4fe5a0e8cc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Incidents -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/bc0f9ecb-bbbb-4c7e-94e3-8d3f06fd64c2",
+            "sourceStep": "\/api\/3\/workflow_steps\/8c6b0412-5a89-4f76-8522-4f0677499ccc",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2a99e1af-0e12-4f92-8ff2-6a5a2cbe8bde"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "cc66ded3-7745-4f80-9cdc-9d7d2adbda68",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Alert",
+        "jira"
+    ]
+}

@@ -5,13 +5,12 @@
     "aliasName": null,
     "tag": "#Jira",
     "description": "When a comment is added to an alert, adds the same comment to the corresponding Jira ticket",
-    "isActive": true,
+    "isActive": false,
     "debug": false,
     "singleRecordExecution": false,
     "remoteExecutableFlag": false,
     "parameters": [],
     "synchronous": false,
-    "lastModifyDate": 1650264536,
     "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
     "versions": [],
     "triggerStep": "\/api\/3\/workflow_steps\/ff673d2a-26a0-407a-8f4c-70374f562e6a",
@@ -22,7 +21,7 @@
             "description": null,
             "arguments": {
                 "name": "Jira",
-                "when": "{{vars.jira_ticket_ids| length > 0}}",
+                "when": "{{vars.jiraTicketIDs | length > 0}}",
                 "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
                 "params": {
                     "comment": "{{vars.input.records[0].content| html2text}}",
@@ -30,7 +29,7 @@
                 },
                 "version": "1.1.1",
                 "for_each": {
-                    "item": "{{vars.jira_ticket_ids}}",
+                    "item": "{{vars.jiraTicketIDs}}",
                     "parallel": false,
                     "condition": ""
                 },
@@ -45,39 +44,47 @@
                 }
             },
             "status": null,
-            "top": "435",
+            "top": "300",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
-            "uuid": "5dd3302d-baf3-43fb-ab78-45a0c6eb88b8",
-            "id": 15973
+            "group": null,
+            "uuid": "5dd3302d-baf3-43fb-ab78-45a0c6eb88b8"
         },
         {
             "@type": "WorkflowStep",
-            "name": "Get Related Alerts",
+            "name": "Get Related",
             "description": null,
             "arguments": {
-                "related_alerts": "{{(vars.input.records[0]['@id']+\"\/alerts\")|fromIRI}}"
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "uuid",
+                            "value": "{{vars.input.records[0].uuid}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ],
+                    "__selectFields": [
+                        "id",
+                        "alerts"
+                    ]
+                },
+                "module": "comments?$limit=30&$relationships=true&$fsr_max_relation_count=100",
+                "checkboxFields": true,
+                "step_variables": {
+                    "jiraTicketIDs": "{{vars.steps.Get_Related[0].alerts | json_query('[].jiraTicketID[]')}}"
+                }
             },
             "status": null,
             "top": "165",
             "left": "125",
-            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
-            "uuid": "8481f2f0-4122-49f7-812e-b926c4b96133",
-            "id": 15982
-        },
-        {
-            "@type": "WorkflowStep",
-            "name": "Filter Jira Records",
-            "description": null,
-            "arguments": {
-                "jira_ticket_ids": "{{vars.related_alerts['hydra:member']|json_query('[].jiraTicketID[]')}}"
-            },
-            "status": null,
-            "top": "300",
-            "left": "125",
-            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
-            "uuid": "97bac705-2b74-4b70-8e76-6c8be85f1e0f",
-            "id": 15983
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "656213b5-03e7-413c-876d-6b2a135e441f"
         },
         {
             "@type": "WorkflowStep",
@@ -107,49 +114,42 @@
             "top": "30",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/ea155646-3821-4542-9702-b246da430a8d",
-            "uuid": "ff673d2a-26a0-407a-8f4c-70374f562e6a",
-            "id": 15981
+            "group": null,
+            "uuid": "ff673d2a-26a0-407a-8f4c-70374f562e6a"
         }
     ],
     "routes": [
         {
             "@type": "WorkflowRoute",
-            "name": "Start -> Get Related Alerts",
-            "targetStep": "\/api\/3\/workflow_steps\/8481f2f0-4122-49f7-812e-b926c4b96133",
+            "name": "Get Related -> Add Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/5dd3302d-baf3-43fb-ab78-45a0c6eb88b8",
+            "sourceStep": "\/api\/3\/workflow_steps\/656213b5-03e7-413c-876d-6b2a135e441f",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "84bcf216-f960-4610-bbe7-a7d86c827ffe"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get Related",
+            "targetStep": "\/api\/3\/workflow_steps\/656213b5-03e7-413c-876d-6b2a135e441f",
             "sourceStep": "\/api\/3\/workflow_steps\/ff673d2a-26a0-407a-8f4c-70374f562e6a",
             "label": null,
             "isExecuted": false,
-            "uuid": "54279a2c-16e8-4318-840f-9df65868c7c2"
-        },
-        {
-            "@type": "WorkflowRoute",
-            "name": "Get Related Alerts -> Filter Jira Records",
-            "targetStep": "\/api\/3\/workflow_steps\/97bac705-2b74-4b70-8e76-6c8be85f1e0f",
-            "sourceStep": "\/api\/3\/workflow_steps\/8481f2f0-4122-49f7-812e-b926c4b96133",
-            "label": null,
-            "isExecuted": false,
-            "uuid": "524f454f-9606-46ad-be9d-c83d17564a9c"
-        },
-        {
-            "@type": "WorkflowRoute",
-            "name": "Filter Jira Records -> Add Comment",
-            "targetStep": "\/api\/3\/workflow_steps\/5dd3302d-baf3-43fb-ab78-45a0c6eb88b8",
-            "sourceStep": "\/api\/3\/workflow_steps\/97bac705-2b74-4b70-8e76-6c8be85f1e0f",
-            "label": null,
-            "isExecuted": false,
-            "uuid": "48e02381-09dc-4890-b49c-b56b1d264ef4"
+            "group": null,
+            "uuid": "8ba67e96-f645-4dd2-b9b8-7118a7e65499"
         }
     ],
+    "groups": [],
     "priority": null,
     "uuid": "6dfcc3b0-be42-43cd-9203-0db4edbd4e8e",
-    "recordTags": [
-        "jira"
-    ],
-    "id": 3080,
-    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
-    "createDate": 1649143702,
-    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
-    "modifyDate": 1650264535,
     "owners": [],
-    "isPrivate": false
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "PostCreate",
+        "Alert",
+        "Comment",
+        "jira"
+    ]
 }

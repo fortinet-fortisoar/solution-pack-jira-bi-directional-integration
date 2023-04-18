@@ -1,0 +1,180 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Delete All Tickets from Project",
+    "aliasName": null,
+    "tag": "#Jira",
+    "description": "Playbook clean up all JIRA tickets based on a specific Project Key.",
+    "isActive": false,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/7bfe935a-3784-4735-b4f6-2d75d3250ea9",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "jiraProjectKEY": "FSR"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "42f9c4c8-d920-44f3-b6a6-20607b0d832e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Delete Ticket",
+            "description": null,
+            "arguments": {
+                "name": "Jira",
+                "when": "{{vars.ticketsIDs | length > 0}}",
+                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "params": {
+                    "issue_key": "{{vars.item}}",
+                    "delete_subtask": true
+                },
+                "version": "1.1.1",
+                "for_each": {
+                    "item": "{{vars.ticketsIDs}}",
+                    "parallel": false,
+                    "condition": ""
+                },
+                "connector": "jira",
+                "operation": "delete_ticket",
+                "operationTitle": "Delete Ticket",
+                "step_variables": {
+                    "step_output": "{{vars.result.data}}"
+                }
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "986f0c67-3603-48fe-9b13-291432474173"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Existing Tickets",
+            "description": null,
+            "arguments": {
+                "name": "Jira",
+                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "params": {
+                    "fields": "",
+                    "status": "",
+                    "startAt": 0,
+                    "maxResults": 50,
+                    "project_key": "{{vars.jiraProjectKEY}}"
+                },
+                "version": "1.1.1",
+                "connector": "jira",
+                "operation": "list_tickets",
+                "operationTitle": "List Tickets",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "ticketsIDs": "{{vars.steps.Get_Existing_Tickets.data.issues | json_query('[].id[]')}}"
+                }
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "ba6ccc6f-0a4b-4cef-90b8-62e8da3c3f6a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Incidents",
+            "description": null,
+            "arguments": {
+                "route": "27c206c8-3154-4779-bd6f-bc2e14f629d6",
+                "title": "Jira: Delete All Ticket",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    },
+                    "incidents": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "7bfe935a-3784-4735-b4f6-2d75d3250ea9"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Existing Tickets",
+            "targetStep": "\/api\/3\/workflow_steps\/ba6ccc6f-0a4b-4cef-90b8-62e8da3c3f6a",
+            "sourceStep": "\/api\/3\/workflow_steps\/42f9c4c8-d920-44f3-b6a6-20607b0d832e",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "4380da88-e0da-4c97-864e-227c6be74d5e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Existing Tickets -> Delete Ticket",
+            "targetStep": "\/api\/3\/workflow_steps\/986f0c67-3603-48fe-9b13-291432474173",
+            "sourceStep": "\/api\/3\/workflow_steps\/ba6ccc6f-0a4b-4cef-90b8-62e8da3c3f6a",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "47761e6a-29ce-4b7e-9ca0-667a918b72cc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Incidents -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/42f9c4c8-d920-44f3-b6a6-20607b0d832e",
+            "sourceStep": "\/api\/3\/workflow_steps\/7bfe935a-3784-4735-b4f6-2d75d3250ea9",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "f6951b94-2d08-47ac-976a-82734123a57e"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "94173542-3854-403e-a989-54a92af92002",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Alert",
+        "jira"
+    ]
+}

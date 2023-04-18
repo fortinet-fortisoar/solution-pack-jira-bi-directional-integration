@@ -4,18 +4,32 @@
     "name": "Create Ticket on Jira",
     "aliasName": null,
     "tag": "#Jira",
-    "description": "When an alert is created creates its corresponding ticket on Jira",
-    "isActive": true,
+    "description": "When an alert is created, playbook creates its corresponding ticket on Jira",
+    "isActive": false,
     "debug": false,
     "singleRecordExecution": false,
     "remoteExecutableFlag": false,
     "parameters": [],
     "synchronous": false,
-    "lastModifyDate": 1650264443,
     "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
     "versions": [],
     "triggerStep": "\/api\/3\/workflow_steps\/7d552447-c410-4ca2-959f-6e6e4917e568",
     "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
+                "jiraProjectKEY": "FSR"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "ebc53775-cca2-4b11-8b5a-c401ae312fc7"
+        },
         {
             "@type": "WorkflowStep",
             "name": "Create Ticket",
@@ -24,10 +38,10 @@
                 "name": "Jira",
                 "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
                 "params": {
-                    "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severity_map)}}",
+                    "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severityMap)}}",
                     "issue_type": "Task",
-                    "project_key": "{{vars.Jira_Project_KEY}}",
-                    "other_fields": "{\"customfield_10015\": \"{{arrow.get(vars.input.records[0].createDate).to(\"UTC\").format(\"YYYY-MM-DDTHH:mm:ss.SSSZZ\")}}\"}",
+                    "project_key": "{{vars.jiraProjectKEY}}",
+                    "other_fields": "",
                     "ticket_summary": "SOAR: {{vars.input.records[0].name}}",
                     "ticket_description": "{%if vars.input.records[0].description%}{{vars.input.records[0].description | html2text}}{%else%}N\/A{%endif%}"
                 },
@@ -41,33 +55,8 @@
             "top": "300",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
-            "uuid": "084b54e1-3a9c-473f-bb24-17c0beb53120",
-            "id": 15952
-        },
-        {
-            "@type": "WorkflowStep",
-            "name": "Update Incident",
-            "description": null,
-            "arguments": {
-                "resource": {
-                    "jiraTicketID": "{{vars.steps.Create_Ticket.data.id}}"
-                },
-                "_showJson": false,
-                "operation": "Append",
-                "collection": "{{vars.input.records[0]['@id']}}",
-                "__recommend": [],
-                "collectionType": "\/api\/3\/incidents",
-                "fieldOperation": {
-                    "recordTags": "Append"
-                },
-                "step_variables": []
-            },
-            "status": null,
-            "top": "435",
-            "left": "125",
-            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
-            "uuid": "691f2055-23cd-4ae7-b263-4c4bb0b286f4",
-            "id": 15953
+            "group": null,
+            "uuid": "084b54e1-3a9c-473f-bb24-17c0beb53120"
         },
         {
             "@type": "WorkflowStep",
@@ -97,26 +86,46 @@
             "top": "30",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/ea155646-3821-4542-9702-b246da430a8d",
-            "uuid": "7d552447-c410-4ca2-959f-6e6e4917e568",
-            "id": 15976
+            "group": null,
+            "uuid": "7d552447-c410-4ca2-959f-6e6e4917e568"
         },
         {
             "@type": "WorkflowStep",
-            "name": "Configuration",
+            "name": "Update Alert With Ticket ID",
             "description": null,
             "arguments": {
-                "severity_map": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
-                "Jira_Project_KEY": "TIC"
+                "resource": {
+                    "jiraTicketID": "{{vars.steps.Create_Ticket.data.id}}"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
             },
             "status": null,
-            "top": "165",
+            "top": "435",
             "left": "125",
-            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
-            "uuid": "ebc53775-cca2-4b11-8b5a-c401ae312fc7",
-            "id": 15977
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "691f2055-23cd-4ae7-b263-4c4bb0b286f4"
         }
     ],
     "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Ticket",
+            "targetStep": "\/api\/3\/workflow_steps\/084b54e1-3a9c-473f-bb24-17c0beb53120",
+            "sourceStep": "\/api\/3\/workflow_steps\/ebc53775-cca2-4b11-8b5a-c401ae312fc7",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "9b07175e-95f1-4c98-acd2-41b06e323a0f"
+        },
         {
             "@type": "WorkflowRoute",
             "name": "Create Ticket -> Update Incident",
@@ -124,6 +133,7 @@
             "sourceStep": "\/api\/3\/workflow_steps\/084b54e1-3a9c-473f-bb24-17c0beb53120",
             "label": null,
             "isExecuted": false,
+            "group": null,
             "uuid": "34dafbd7-1415-48df-aae7-9afd65c75891"
         },
         {
@@ -133,28 +143,19 @@
             "sourceStep": "\/api\/3\/workflow_steps\/7d552447-c410-4ca2-959f-6e6e4917e568",
             "label": null,
             "isExecuted": false,
+            "group": null,
             "uuid": "c1966f31-9dec-4665-a53f-16c6baf7f9c1"
-        },
-        {
-            "@type": "WorkflowRoute",
-            "name": "Configuration -> Create Ticket",
-            "targetStep": "\/api\/3\/workflow_steps\/084b54e1-3a9c-473f-bb24-17c0beb53120",
-            "sourceStep": "\/api\/3\/workflow_steps\/ebc53775-cca2-4b11-8b5a-c401ae312fc7",
-            "label": null,
-            "isExecuted": false,
-            "uuid": "9b07175e-95f1-4c98-acd2-41b06e323a0f"
         }
     ],
+    "groups": [],
     "priority": null,
     "uuid": "870587d4-9cb4-42eb-b115-ada61c2333c3",
-    "recordTags": [
-        "jira"
-    ],
-    "id": 3071,
-    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
-    "createDate": 1649143702,
-    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
-    "modifyDate": 1650264444,
     "owners": [],
-    "isPrivate": false
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "PostCreate",
+        "Alert",
+        "jira"
+    ]
 }
