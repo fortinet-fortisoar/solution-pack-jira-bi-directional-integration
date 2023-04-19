@@ -7,13 +7,28 @@ This solution pack helps you to understand the steps FortiSOAR takes to respond 
 
 # Jira
 
+## Simulation Mode:
+
+> **Note** Mark the global variable `Demo_mode` as `True`
+
+The simulation mode has one sample data **Jira** that helps you get a better understanding of how the solution pack functions. Following steps help you use the solution pack with some included sample data.
+
+- Browse to `Simulations` > `Jira` scenario and click **Simulate Scenario**.
+- This scenario adds alert `Unable to log into VPN` as severity `Medium`.
+- Open Alert module and execute playbook **Create Jira Ticket**. Specify `Jira Project Key` as in which you want to add this alert.
+- Jira tickets are updated when the `Status`, `Severity`, or `Description` are changed.
+- As soon as a comment or reply is added to an alert, Jira ticket data is synced.
+- To sync the ticket status with the alert status, tigger **Jira: Sync Jira Ticket Status** playbook from Alert's `Execute`, entering the values for field `Jira Project KEY,` `Start At,` and `Max Result`.
+- To delete all Jira ticket, trigger **Delete All Jira Tickets from Project** playbook from Alert's `Execute`, entering the values for field `Jira Project KEY,` `Start At,` and `Max Result`.
+
+## Environment Mode:
+
+> **Note** Mark the global variable `Demo_mode` as `False`
+
 Solution pack contains playbook which helps in following ways:
-* An automated synchronisation with Jira is made possible by the Post Create playbook on alert , which allows creation of **Issue** in Jira with the same alert's `Severity`, `Status` and `Description`
-* The Post Update playbook on alert facilitates an automated synchronisation with Jira, enabling the updating of Jira **Issue** with the corresponding changes made to the alert's `Severity`, `Status` or `Description`
-* A playbook is used to automatically update Jira **Issue** whenever a comment is added to an alert.
-* A manual trigger playbook is utilized to automatically close alerts if the corresponding **Issue** in Jira is marked as 'Done'
-* A manual trigger playbook is implemented to delete all tickets or **Issue** associated with a specified project of Jira.
 
-> **Note**: Each of the associated playbooks includes a `Configuration` step that features a **jiraProjectKEY** key. This key permits you to specify the Project Key from Jira that you wish to employ for automation purposes.
-
-![](./res/configuration.png)
+* Using the playbook **Create Jira Ticket** on alert, you can generate a `Issue` in Jira with the same alert's `Severity,` `Status,` and `Description` by manually entering a value for the `Jira Project KEY.`
+* The Post Update playbook **Update Jira Ticket** on alert enables an automated sync with Jira, allowing Jira **Issue** to be updated with the relevant changes made to the alert's `Severity,` `Status,` or `Description.` Playbook requires the value for key `jiraProjectKEY` in configuration step of playbook. 
+* Playbook **Sync Alert Comment on Jira** is used to automatically update Jira **Issue** with comment whenever a new comment or reply is added to an alert.
+* A manual trigger playbook **Jira: Sync Jira Ticket Status** is utilized to update alerts status as the corresponding **Issue** in Jira. Playbook requires the value for fields `Jira Project KEY,` `Start At, ` and `Max Result` on triggering the playbook.
+* A manual trigger playbook **Jira: Delete All Jira Ticket** is implemented to delete all **Issue**(or ticket) associated with a specified project of Jira. Playbook requires the value for fields `Jira Project KEY,` `Start At, ` and `Max Result` on triggering the playbook.
