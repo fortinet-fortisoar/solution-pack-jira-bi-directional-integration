@@ -20,7 +20,8 @@
             "name": "Configuration",
             "description": null,
             "arguments": {
-                "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}"
+                "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
+                "useMockOutput": "{{globalVars.Demo_mode}}"
             },
             "status": null,
             "top": "165",
@@ -47,6 +48,7 @@
                 "version": "1.1.1",
                 "connector": "jira",
                 "operation": "create_ticket",
+                "mock_result": "{\n  \"data\": {\n    \"id\": \"10026\",\n    \"key\": \"FSR-12\",\n    \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/10026\",\n    \"status\": \"Open\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"3 seconds 242 ms\"\n}",
                 "operationTitle": "Create Ticket",
                 "step_variables": []
             },

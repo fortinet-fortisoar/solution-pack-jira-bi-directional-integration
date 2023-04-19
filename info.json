@@ -39,6 +39,13 @@
                 "name": "Jira",
                 "apiName": "jira"
             }
+        ],
+        "recordSets": [
+            {
+                "name": "Scenario",
+                "apiName": "scenario",
+                "count": 1
+            }
         ]
     }
 }

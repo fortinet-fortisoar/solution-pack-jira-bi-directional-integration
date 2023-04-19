@@ -9,7 +9,7 @@ This solution pack helps you to understand the steps FortiSOAR takes to respond 
 
 ## Simulation Mode:
 
-> **Note** Mark the global variable `Demo_mode` as `True`
+> **Note** Mark the global variable `Demo_mode` as `True` and mark all the playbook under collection **02-Use Case-jira** as `Active.`
 
 The simulation mode has one sample data **Jira** that helps you get a better understanding of how the solution pack functions. Following steps help you use the solution pack with some included sample data.
 
@@ -23,7 +23,7 @@ The simulation mode has one sample data **Jira** that helps you get a better und
 
 ## Environment Mode:
 
-> **Note** Mark the global variable `Demo_mode` as `False`
+> **Note** Mark the global variable `Demo_mode` as `False` and mark all the playbook under collection **02-Use Case-jira** as `Active.`
 
 Solution pack contains playbook which helps in following ways:
 

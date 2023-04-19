@@ -22,6 +22,7 @@
             "arguments": {
                 "statusMap": "{\n\"Investigating\":\"Work in progress\",\n\"Open\":\"Open\",\n\"Re-Opened\":\"Reopened\",\n\"Pending\":\"Pending\",\n\"Closed\":\"Done\"\n}",
                 "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
+                "useMockOutput": "{{globalVars.Demo_mode}}",
                 "jiraProjectKEY": "FSR"
             },
             "status": null,
@@ -124,6 +125,7 @@
                 "version": "1.1.1",
                 "connector": "jira",
                 "operation": "update_ticket",
+                "mock_result": "{\n  \"data\": {\n    \"status\": \"Success\",\n    \"message\": \"Ticket updated successfully\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"4 seconds 78 ms\"\n}",
                 "ignore_errors": false,
                 "operationTitle": "Update Ticket",
                 "step_variables": []

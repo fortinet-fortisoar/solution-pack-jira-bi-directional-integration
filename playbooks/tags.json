@@ -4,5 +4,6 @@
     "ManualTrigger",
     "PostCreate",
     "PostUpdate",
-    "Jira"
+    "Jira",
+    "Scenario"
 ]

@@ -35,6 +35,7 @@
                 },
                 "connector": "jira",
                 "operation": "add_comment",
+                "mock_result": "{\n  \"result\": [\n    {\n      \"data\": {\n        \"id\": \"10033\",\n        \"body\": \"Added Comment\\n\\n\",\n        \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/10026\/comment\/10033\",\n        \"author\": {\n          \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/user?accountId=62b610a01479a75d631e279e\",\n          \"active\": true,\n          \"timeZone\": \"Asia\/Calcutta\",\n          \"accountId\": \"62b610a01479a75d631e279e\",\n          \"avatarUrls\": {\n            \"16x16\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"24x24\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"32x32\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"48x48\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\"\n          },\n          \"accountType\": \"atlassian\",\n          \"displayName\": \"Demo\",\n          \"emailAddress\": \"demo@gmail.com\"\n        },\n        \"created\": \"2023-04-19T17:09:25.640+0530\",\n        \"updated\": \"2023-04-19T17:09:25.640+0530\",\n        \"jsdPublic\": true,\n        \"updateAuthor\": {\n          \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/user?accountId=62b610a01479a75d631e279e\",\n          \"active\": true,\n          \"timeZone\": \"Asia\/Calcutta\",\n          \"accountId\": \"62b610a01479a75d631e279e\",\n          \"avatarUrls\": {\n            \"16x16\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"24x24\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"32x32\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"48x48\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\"\n          },\n          \"accountType\": \"atlassian\",\n          \"displayName\": \"Demo\",\n          \"emailAddress\": \"demo@gmail.com\"\n        }\n      },\n      \"status\": \"Success\",\n      \"message\": \"\",\n      \"operation\": null\n    }\n  ],\n  \"execution_time\": \"1 seconds 728 ms\",\n  \"status\": \"finished\"\n}",
                 "operationTitle": "Add Comment",
                 "step_variables": [],
                 "operationOutput": {
@@ -42,11 +43,25 @@
                 }
             },
             "status": null,
-            "top": "300",
+            "top": "435",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
             "group": null,
             "uuid": "5dd3302d-baf3-43fb-ab78-45a0c6eb88b8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "useMockOutput": "{{globalVars.Demo_mode}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "74b8b9b4-d338-43f2-9aae-c24b020874b8"
         },
         {
             "@type": "WorkflowStep",
@@ -85,7 +100,7 @@
                 }
             },
             "status": null,
-            "top": "165",
+            "top": "300",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
             "group": null,
@@ -126,6 +141,16 @@
     "routes": [
         {
             "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Related",
+            "targetStep": "\/api\/3\/workflow_steps\/656213b5-03e7-413c-876d-6b2a135e441f",
+            "sourceStep": "\/api\/3\/workflow_steps\/74b8b9b4-d338-43f2-9aae-c24b020874b8",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "53f333e7-53a2-4481-9afb-a78ba1ad47db"
+        },
+        {
+            "@type": "WorkflowRoute",
             "name": "Get Related -> Add Comment",
             "targetStep": "\/api\/3\/workflow_steps\/5dd3302d-baf3-43fb-ab78-45a0c6eb88b8",
             "sourceStep": "\/api\/3\/workflow_steps\/656213b5-03e7-413c-876d-6b2a135e441f",
@@ -136,13 +161,13 @@
         },
         {
             "@type": "WorkflowRoute",
-            "name": "Start -> Get Related",
-            "targetStep": "\/api\/3\/workflow_steps\/656213b5-03e7-413c-876d-6b2a135e441f",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/74b8b9b4-d338-43f2-9aae-c24b020874b8",
             "sourceStep": "\/api\/3\/workflow_steps\/ff673d2a-26a0-407a-8f4c-70374f562e6a",
             "label": null,
             "isExecuted": false,
             "group": null,
-            "uuid": "8ba67e96-f645-4dd2-b9b8-7118a7e65499"
+            "uuid": "c050639c-fb20-4358-95a2-a7cfb3bc58cd"
         }
     ],
     "groups": [],
