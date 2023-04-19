@@ -90,6 +90,8 @@
     "isPrivate": false,
     "deletedAt": null,
     "recordTags": [
-        "Scenario"
+        "Alert",
+        "Scenario",
+        "Jira"
     ]
 }

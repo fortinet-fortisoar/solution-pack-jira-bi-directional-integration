@@ -117,6 +117,14 @@
             "name": "Update Alert With Ticket ID",
             "description": null,
             "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "thread": false,
+                    "content": "<p>Added corresponding ticket on Jira<\/p>",
+                    "records": "{{vars.input.records[0]['@id']}}"
+                },
                 "resource": {
                     "jiraTicketID": "{{vars.steps.Create_Ticket.data.id}}"
                 },

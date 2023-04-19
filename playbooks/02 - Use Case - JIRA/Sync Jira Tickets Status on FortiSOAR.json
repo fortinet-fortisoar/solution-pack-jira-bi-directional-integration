@@ -58,7 +58,7 @@
                 "useMockOutput": "{{globalVars.Demo_mode}}"
             },
             "status": null,
-            "top": "160",
+            "top": "165",
             "left": "300",
             "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
             "group": null,
@@ -126,8 +126,8 @@
                 "params": {
                     "fields": "",
                     "status": "",
-                    "startAt": "{% if vars.input.params.startAt %}{{vars.input.params.startAt}}{% else %}50{% endif %}",
-                    "maxResults": "{% if vars.input.params.maxResult %}{{vars.input.params.maxResult}}{% else %}50{% endif %}",
+                    "startAt": "{% if vars.input.params.startAt %}{{vars.input.params.startAt}}{% else %}\"0\"{% endif %}",
+                    "maxResults": "{% if vars.input.params.maxResult %}{{vars.input.params.maxResult}}{% else %}\"50\"{% endif %}",
                     "project_key": "{{vars.input.params.jiraProjectKEY}}"
                 },
                 "version": "1.1.1",
@@ -289,6 +289,12 @@
             "name": "Update Alert",
             "description": null,
             "arguments": {
+                "for_each": {
+                    "item": "{{vars.foundTicketID}}",
+                    "__bulk": true,
+                    "condition": "",
+                    "batch_size": 100
+                },
                 "resource": {
                     "status": "{{\"AlertStatus\" | picklist(vars.item.status | resolveRange(vars.statusMap), \"@id\")}}"
                 },

@@ -17,6 +17,42 @@
     "steps": [
         {
             "@type": "WorkflowStep",
+            "name": "Add Deleting Ticket Comment On Alert",
+            "description": null,
+            "arguments": {
+                "for_each": {
+                    "item": "{{vars.steps.Get_All_Alert_For_Ticket_ID | flatten}}",
+                    "__bulk": true,
+                    "parallel": false,
+                    "condition": "",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.item['@id']}}",
+                    "people": [],
+                    "content": "<p>Deleted corresponding ticket on Jira<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "ea7d884d-dd12-4daa-ab88-a791296a922e"
+        },
+        {
+            "@type": "WorkflowStep",
             "name": "Configuration",
             "description": null,
             "arguments": {
@@ -64,6 +100,40 @@
         },
         {
             "@type": "WorkflowStep",
+            "name": "Get All Alert For Ticket ID",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "jiraTicketID",
+                            "value": "{{vars.item}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                },
+                "module": "alerts?$limit=30",
+                "for_each": {
+                    "item": "{{vars.ticketsIDs}}",
+                    "parallel": false,
+                    "condition": ""
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "1e3a2283-7c1d-4438-9e81-9c14a93f5ef9"
+        },
+        {
+            "@type": "WorkflowStep",
             "name": "Get Existing Tickets",
             "description": null,
             "arguments": {
@@ -72,8 +142,8 @@
                 "params": {
                     "fields": "",
                     "status": "",
-                    "startAt": "{% if vars.input.params.startAt %}{{vars.input.params.startAt}}{% else %}0{% endif %}",
-                    "maxResults": "{% if vars.input.params.maxResult %}{{vars.input.params.maxResult}}{% else %}50{% endif %}",
+                    "startAt": "{% if vars.input.params.startAt %}{{vars.input.params.startAt}}{% else %}\"0\"{% endif %}",
+                    "maxResults": "{% if vars.input.params.maxResult %}{{vars.input.params.maxResult}}{% else %}\"50\"{% endif %}",
                     "project_key": "{{vars.input.params.jiraProjectKEY}}"
                 },
                 "version": "1.1.1",
@@ -214,6 +284,26 @@
             "isExecuted": false,
             "group": null,
             "uuid": "e3f5d8fe-a6e7-429b-8c35-7e8369d0a82c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Delete Ticket -> Get All Alert For Ticket ID",
+            "targetStep": "\/api\/3\/workflow_steps\/1e3a2283-7c1d-4438-9e81-9c14a93f5ef9",
+            "sourceStep": "\/api\/3\/workflow_steps\/986f0c67-3603-48fe-9b13-291432474173",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "0dae5c48-2cf3-4606-b48a-7f143a807d0f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get All Alert For Ticket ID -> Add Deleting Ticket Comment On Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/ea7d884d-dd12-4daa-ab88-a791296a922e",
+            "sourceStep": "\/api\/3\/workflow_steps\/1e3a2283-7c1d-4438-9e81-9c14a93f5ef9",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "c6554ab0-5c54-4a80-8bd0-ae553a4225c8"
         },
         {
             "@type": "WorkflowRoute",
