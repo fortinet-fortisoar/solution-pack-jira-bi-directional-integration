@@ -1,10 +1,10 @@
 {
     "@type": "Workflow",
     "triggerLimit": null,
-    "name": "Delete All Tickets from Project",
+    "name": "Delete All Jira Tickets from Project",
     "aliasName": null,
     "tag": "#Jira",
-    "description": "Playbook clean up all JIRA tickets based on a specific Project Key.",
+    "description": "Playbook clean up all JIRA tickets based on a specificed Project Key.",
     "isActive": false,
     "debug": false,
     "singleRecordExecution": false,
@@ -15,20 +15,6 @@
     "versions": [],
     "triggerStep": "\/api\/3\/workflow_steps\/7bfe935a-3784-4735-b4f6-2d75d3250ea9",
     "steps": [
-        {
-            "@type": "WorkflowStep",
-            "name": "Configuration",
-            "description": null,
-            "arguments": {
-                "jiraProjectKEY": "FSR"
-            },
-            "status": null,
-            "top": "165",
-            "left": "125",
-            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
-            "group": null,
-            "uuid": "42f9c4c8-d920-44f3-b6a6-20607b0d832e"
-        },
         {
             "@type": "WorkflowStep",
             "name": "Delete Ticket",
@@ -55,7 +41,7 @@
                 }
             },
             "status": null,
-            "top": "435",
+            "top": "300",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
             "group": null,
@@ -71,9 +57,9 @@
                 "params": {
                     "fields": "",
                     "status": "",
-                    "startAt": 0,
-                    "maxResults": 50,
-                    "project_key": "{{vars.jiraProjectKEY}}"
+                    "startAt": "{{vars.input.params.startAt}}",
+                    "maxResults": "{{vars.input.params.maxResult}}",
+                    "project_key": "{{vars.input.params.jiraProjectKEY}}"
                 },
                 "version": "1.1.1",
                 "connector": "jira",
@@ -85,7 +71,7 @@
                 }
             },
             "status": null,
-            "top": "300",
+            "top": "165",
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
             "group": null,
@@ -93,21 +79,89 @@
         },
         {
             "@type": "WorkflowStep",
-            "name": "Incidents",
+            "name": "Start",
             "description": null,
             "arguments": {
                 "route": "27c206c8-3154-4779-bd6f-bc2e14f629d6",
-                "title": "Jira: Delete All Ticket",
+                "title": "Jira: Delete All Jira Ticket",
                 "resources": [
                     "alerts"
                 ],
-                "inputVariables": [],
+                "inputVariables": [
+                    {
+                        "name": "jiraProjectKEY",
+                        "type": "string",
+                        "label": "Jira Project KEY",
+                        "tooltip": "Specify Jira Project KEY",
+                        "dataType": "text",
+                        "formType": "text",
+                        "required": true,
+                        "_expanded": false,
+                        "defaultValue": "FSR",
+                        "_previousName": "j",
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    },
+                    {
+                        "name": "startAt",
+                        "type": "integer",
+                        "label": "Start At",
+                        "title": "Integer Field",
+                        "usable": true,
+                        "tooltip": "Start Index.",
+                        "dataType": "integer",
+                        "formType": "integer",
+                        "required": false,
+                        "_expanded": false,
+                        "mmdUpdate": true,
+                        "collection": false,
+                        "searchable": true,
+                        "templateUrl": "app\/components\/form\/fields\/integer.html",
+                        "defaultValue": 0,
+                        "_previousName": "startAr",
+                        "playbookField": true,
+                        "lengthConstraint": true,
+                        "allowedEncryption": false,
+                        "allowedGridColumn": true,
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    },
+                    {
+                        "name": "maxResult",
+                        "type": "integer",
+                        "label": "Max Result",
+                        "title": "Integer Field",
+                        "usable": true,
+                        "tooltip": "Maximum number of tickets to be fetched",
+                        "dataType": "integer",
+                        "formType": "integer",
+                        "required": false,
+                        "_expanded": false,
+                        "mmdUpdate": true,
+                        "collection": false,
+                        "searchable": true,
+                        "templateUrl": "app\/components\/form\/fields\/integer.html",
+                        "defaultValue": 50,
+                        "_previousName": "maxResult",
+                        "playbookField": true,
+                        "lengthConstraint": true,
+                        "allowedEncryption": false,
+                        "allowedGridColumn": true,
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    }
+                ],
                 "step_variables": {
                     "input": {
-                        "params": [],
+                        "params": {
+                            "startAt": "{{vars.request.data[\"startAt\"]}}",
+                            "maxResult": "{{vars.request.data[\"maxResult\"]}}",
+                            "jiraProjectKEY": "{{vars.request.data[\"jiraProjectKEY\"]}}"
+                        },
                         "records": "{{vars.input.records}}"
                     }
                 },
+                "_promptexpanded": true,
                 "displayConditions": {
                     "alerts": {
                         "sort": [],
@@ -122,7 +176,7 @@
                         "filters": []
                     }
                 },
-                "executeButtonText": "Execute",
+                "executeButtonText": "Delete All",
                 "noRecordExecution": true,
                 "singleRecordExecution": false
             },
@@ -137,16 +191,6 @@
     "routes": [
         {
             "@type": "WorkflowRoute",
-            "name": "Configuration -> Get Existing Tickets",
-            "targetStep": "\/api\/3\/workflow_steps\/ba6ccc6f-0a4b-4cef-90b8-62e8da3c3f6a",
-            "sourceStep": "\/api\/3\/workflow_steps\/42f9c4c8-d920-44f3-b6a6-20607b0d832e",
-            "label": null,
-            "isExecuted": false,
-            "group": null,
-            "uuid": "4380da88-e0da-4c97-864e-227c6be74d5e"
-        },
-        {
-            "@type": "WorkflowRoute",
             "name": "Get Existing Tickets -> Delete Ticket",
             "targetStep": "\/api\/3\/workflow_steps\/986f0c67-3603-48fe-9b13-291432474173",
             "sourceStep": "\/api\/3\/workflow_steps\/ba6ccc6f-0a4b-4cef-90b8-62e8da3c3f6a",
@@ -157,13 +201,13 @@
         },
         {
             "@type": "WorkflowRoute",
-            "name": "Incidents -> Configuration",
-            "targetStep": "\/api\/3\/workflow_steps\/42f9c4c8-d920-44f3-b6a6-20607b0d832e",
+            "name": "Start -> Get Existing Tickets",
+            "targetStep": "\/api\/3\/workflow_steps\/ba6ccc6f-0a4b-4cef-90b8-62e8da3c3f6a",
             "sourceStep": "\/api\/3\/workflow_steps\/7bfe935a-3784-4735-b4f6-2d75d3250ea9",
             "label": null,
             "isExecuted": false,
             "group": null,
-            "uuid": "f6951b94-2d08-47ac-976a-82734123a57e"
+            "uuid": "c00ea3ad-93a9-42fa-b37e-a84ef6f7d14f"
         }
     ],
     "groups": [],
@@ -175,6 +219,6 @@
     "recordTags": [
         "ManualTrigger",
         "Alert",
-        "jira"
+        "Jira"
     ]
 }

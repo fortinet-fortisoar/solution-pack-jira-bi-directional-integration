@@ -1,10 +1,10 @@
 {
     "@type": "Workflow",
     "triggerLimit": null,
-    "name": "Create Ticket on Jira",
+    "name": "Create Jira Ticket",
     "aliasName": null,
     "tag": "#Jira",
-    "description": "When an alert is created, playbook creates its corresponding ticket on Jira",
+    "description": "Playbook creates its corresponding ticket on Jira",
     "isActive": false,
     "debug": false,
     "singleRecordExecution": false,
@@ -13,15 +13,14 @@
     "synchronous": false,
     "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
     "versions": [],
-    "triggerStep": "\/api\/3\/workflow_steps\/7d552447-c410-4ca2-959f-6e6e4917e568",
+    "triggerStep": "\/api\/3\/workflow_steps\/bef9bc64-8e7c-4916-bab9-088f637e37ab",
     "steps": [
         {
             "@type": "WorkflowStep",
             "name": "Configuration",
             "description": null,
             "arguments": {
-                "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
-                "jiraProjectKEY": "FSR"
+                "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}"
             },
             "status": null,
             "top": "165",
@@ -40,8 +39,8 @@
                 "params": {
                     "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severityMap)}}",
                     "issue_type": "Task",
-                    "project_key": "{{vars.jiraProjectKEY}}",
-                    "other_fields": "{\u201ccustomfield_10015\": \"{{arrow.get(vars.input.records[0].createDate).to(\"UTC\").format(\"YYYY-MM-DDTHH:mm:ss.SSSZZ\")}}\"}",
+                    "project_key": "{{vars.input.params.jiraProjectKEY}}",
+                    "other_fields": "",
                     "ticket_summary": "SOAR: {{vars.input.records[0].name}}",
                     "ticket_description": "{%if vars.input.records[0].description%}{{vars.input.records[0].description | html2text}}{%else%}N\/A{%endif%}"
                 },
@@ -63,31 +62,53 @@
             "name": "Start",
             "description": null,
             "arguments": {
-                "resource": "alerts",
+                "route": "cc220642-aea4-47be-a0f6-07ccc6baba11",
                 "resources": [
                     "alerts"
                 ],
+                "inputVariables": [
+                    {
+                        "name": "jiraProjectKEY",
+                        "type": "string",
+                        "label": "Jira Project KEY",
+                        "tooltip": "Specify Jira Project KEY",
+                        "dataType": "text",
+                        "formType": "text",
+                        "required": true,
+                        "_expanded": true,
+                        "defaultValue": "FSR",
+                        "_previousName": "jiraProjectKEY",
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    }
+                ],
                 "step_variables": {
                     "input": {
-                        "params": [],
-                        "records": [
-                            "{{vars.input.records[0]}}"
-                        ]
+                        "params": {
+                            "jiraProjectKEY": "{{vars.request.data[\"jiraProjectKEY\"]}}"
+                        },
+                        "records": "{{vars.input.records}}"
                     }
                 },
-                "fieldbasedtrigger": {
-                    "sort": [],
-                    "limit": 30,
-                    "logic": "AND",
-                    "filters": []
-                }
+                "_promptexpanded": true,
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Create Ticket",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
             },
             "status": null,
             "top": "30",
             "left": "125",
-            "stepType": "\/api\/3\/workflow_step_types\/ea155646-3821-4542-9702-b246da430a8d",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
             "group": null,
-            "uuid": "7d552447-c410-4ca2-959f-6e6e4917e568"
+            "uuid": "bef9bc64-8e7c-4916-bab9-088f637e37ab"
         },
         {
             "@type": "WorkflowStep",
@@ -140,11 +161,11 @@
             "@type": "WorkflowRoute",
             "name": "Start -> Configuration",
             "targetStep": "\/api\/3\/workflow_steps\/ebc53775-cca2-4b11-8b5a-c401ae312fc7",
-            "sourceStep": "\/api\/3\/workflow_steps\/7d552447-c410-4ca2-959f-6e6e4917e568",
+            "sourceStep": "\/api\/3\/workflow_steps\/bef9bc64-8e7c-4916-bab9-088f637e37ab",
             "label": null,
             "isExecuted": false,
             "group": null,
-            "uuid": "c1966f31-9dec-4665-a53f-16c6baf7f9c1"
+            "uuid": "e45caa3a-9b58-4ee4-8d14-84985efd8bd3"
         }
     ],
     "groups": [],
@@ -154,8 +175,8 @@
     "isPrivate": false,
     "deletedAt": null,
     "recordTags": [
-        "PostCreate",
+        "ManualTrigger",
         "Alert",
-        "jira"
+        "Jira"
     ]
 }

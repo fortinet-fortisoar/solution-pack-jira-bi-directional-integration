@@ -1,7 +1,7 @@
 {
     "@type": "Workflow",
     "triggerLimit": null,
-    "name": "Sync Comment on Jira",
+    "name": "Sync Alert Comment on Jira",
     "aliasName": null,
     "tag": "#Jira",
     "description": "When a comment is added to an alert, adds the same comment to the corresponding Jira ticket",
@@ -21,7 +21,7 @@
             "description": null,
             "arguments": {
                 "name": "Jira",
-                "when": "{{vars.jiraTicketIDs | length > 0}}",
+                "when": "{{vars.steps.Get_Related | length > 0}}",
                 "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
                 "params": {
                     "comment": "{{vars.input.records[0].content| html2text}}",
@@ -36,9 +36,7 @@
                 "connector": "jira",
                 "operation": "add_comment",
                 "operationTitle": "Add Comment",
-                "step_variables": {
-                    "step_output": "{{vars.result.data}}"
-                },
+                "step_variables": [],
                 "operationOutput": {
                     "body": ""
                 }
@@ -66,6 +64,13 @@
                             "value": "{{vars.input.records[0].uuid}}",
                             "operator": "eq",
                             "_operator": "eq"
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "alerts.jiraTicketID",
+                            "value": "false",
+                            "operator": "isnull",
+                            "_operator": "isnull"
                         }
                     ],
                     "__selectFields": [
@@ -150,6 +155,6 @@
         "PostCreate",
         "Alert",
         "Comment",
-        "jira"
+        "Jira"
     ]
 }

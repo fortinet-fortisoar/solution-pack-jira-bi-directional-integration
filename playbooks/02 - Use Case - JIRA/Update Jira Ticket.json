@@ -1,10 +1,10 @@
 {
     "@type": "Workflow",
     "triggerLimit": null,
-    "name": "Update Ticket on Jira",
+    "name": "Update Jira Ticket",
     "aliasName": null,
     "tag": "#Jira",
-    "description": "Update Jira ticket if its corresponding FortiSOAR alert is updated",
+    "description": "Update Jira ticket if its corresponding FortiSOAR alert status, severity or description is updated",
     "isActive": false,
     "debug": false,
     "singleRecordExecution": false,
@@ -167,6 +167,6 @@
     "recordTags": [
         "PostUpdate",
         "Alert",
-        "jira"
+        "Jira"
     ]
 }
