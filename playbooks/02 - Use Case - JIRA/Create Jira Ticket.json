@@ -48,7 +48,7 @@
                 "version": "1.1.1",
                 "connector": "jira",
                 "operation": "create_ticket",
-                "mock_result": "{\n  \"data\": {\n    \"id\": \"10026\",\n    \"key\": \"FSR-12\",\n    \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/10026\",\n    \"status\": \"Open\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"3 seconds 242 ms\"\n}",
+                "mock_result": "{\n  \"data\": {\n    \"id\": \"10010\",\n    \"key\": \"FSR-10\",\n    \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/10010\",\n    \"status\": \"Open\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"3 seconds 242 ms\"\n}",
                 "operationTitle": "Create Ticket",
                 "step_variables": []
             },
@@ -122,7 +122,7 @@
                     "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
                     "tenant": "",
                     "thread": false,
-                    "content": "<p>Added corresponding ticket on Jira<\/p>",
+                    "content": "<p>Added corresponding ticket to Jira: <span class=\"badge badge-pill badge-danger\" style=\"background: #009d00; color: #fff;\">{{vars.steps.Create_Ticket.data.id}}<\/span><\/p>",
                     "records": "{{vars.input.records[0]['@id']}}"
                 },
                 "resource": {

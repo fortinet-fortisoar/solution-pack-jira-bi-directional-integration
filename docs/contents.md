@@ -29,4 +29,11 @@ The **Jira** solution pack contains the following resources.
 | Create Jira Ticket | Playbook creates its corresponding ticket on Jira |
 | Sync Alert Comment on Jira | When a comment is added to an alert, adds the same comment to the corresponding Jira ticket |
 
+## Scenario Record Set
+
+|**Name**|**Description**|
+| :- | :- |
+| Jira | This scenario demonstrates the Jira use case which includes creation of a Alert as `Unable to log into VPN` |
+
+
 >**Warning:** We recommend that you clone these playbooks before customizing to avoid loss of information while upgrading the solution pack.
