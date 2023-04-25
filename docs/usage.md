@@ -32,3 +32,6 @@ Solution pack contains playbook which helps in following ways:
 * Playbook **Sync Alert Comment on Jira** is used to automatically update Jira **Issue** with comment whenever a new comment or reply is added to an alert.
 * A manual trigger playbook **Jira: Sync Jira Ticket Status** is utilized to update alerts status as the corresponding **Issue** in Jira. Playbook requires the value for fields `Jira Project KEY,` `Start At, ` and `Max Result` on triggering the playbook.
 * A manual trigger playbook **Jira: Delete All Jira Ticket** is implemented to delete all **Issue**(or ticket) associated with a specified project of Jira. Playbook requires the value for fields `Jira Project KEY,` `Start At, ` and `Max Result` on triggering the playbook.
+
+| [Installation](./setup.md#installation) | [Configuration](./setup.md#configuration) | [Contents](./contents.md) |
+|-----------------------------------------|-------------------------------------------|---------------------------|
