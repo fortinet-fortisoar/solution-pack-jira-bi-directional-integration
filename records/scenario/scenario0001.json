@@ -2,7 +2,7 @@
     {
         "@type": "Scenario",
         "configuration": null,
-        "title": "Jira",
+        "title": "Jira Bi-Direction",
         "description": "This scenario demonstrates the Jira use case which includes creation of Alerts as \"Unable to log into VPN\" ",
         "steps": {
             "Steps": [
@@ -21,8 +21,10 @@
         "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
         "createDate": 1681903007.904288,
         "modifyUser": "\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63",
-        "modifyDate": 1681926337.125335,
-        "id": 7,
-        "recordTags": []
+        "modifyDate": 1682421103.727103,
+        "id": 9,
+        "recordTags": [
+            "Jira"
+        ]
     }
 ]

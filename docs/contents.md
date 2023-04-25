@@ -11,6 +11,8 @@ The **Jira** solution pack contains the following resources.
 |:-------|:---------------------------------|
 | Alerts | Added new field "Jira Ticket ID" |
 
+> **Note** This field can be added to the alert SVT.
+
 ## Connector
 
 |**Name**|**Description**|

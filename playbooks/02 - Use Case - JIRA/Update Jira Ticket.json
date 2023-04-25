@@ -62,21 +62,21 @@
         },
         {
             "@type": "WorkflowStep",
-            "name": "Is Status Changed",
-            "description": null,
+            "name": "Is Alert Status Changed",
+            "description": "If FortiSOAR alert status is different from ticket status then only update the status.",
             "arguments": {
                 "conditions": [
                     {
                         "option": "No",
                         "step_iri": "\/api\/3\/workflow_steps\/0f077488-767e-412f-87fb-e763e5f158bf",
                         "condition": "{{ vars.steps.Get_Tickets_Details.data.fields.status.name | resolveRange(vars.jiraToSoarStatusMap) == vars.input.records[0].status.itemValue }}",
-                        "step_name": "Update Ticket"
+                        "step_name": "Update Ticket Except Status"
                     },
                     {
                         "option": "Yes",
                         "default": true,
                         "step_iri": "\/api\/3\/workflow_steps\/57b42d6f-e111-4d54-91c8-043323e3aef5",
-                        "step_name": "Update Ticket Status"
+                        "step_name": "Update Ticket Details"
                     }
                 ]
             },
@@ -162,13 +162,13 @@
         },
         {
             "@type": "WorkflowStep",
-            "name": "Update Ticket",
-            "description": null,
+            "name": "Update Ticket Details",
+            "description": "Updated Ticket all details along with status",
             "arguments": {
                 "name": "Jira",
-                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "config": "A1",
                 "params": {
-                    "status": "",
+                    "status": "{{vars.input.records[0].status.itemValue | resolveRange(vars.soarToJiraStatusMap)}}",
                     "comment": "SOAR Sync at {{arrow.utcnow().format(\"HH:mm:ss DD\/MM\/YYYY\")}}",
                     "summary": "SOAR: {{vars.input.records[0].name}}",
                     "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severityMap)}}",
@@ -190,17 +190,17 @@
             "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
             "group": null,
-            "uuid": "0f077488-767e-412f-87fb-e763e5f158bf"
+            "uuid": "57b42d6f-e111-4d54-91c8-043323e3aef5"
         },
         {
             "@type": "WorkflowStep",
-            "name": "Update Ticket Status",
-            "description": null,
+            "name": "Update Ticket Except Status",
+            "description": "Updated Ticket all details excluding status",
             "arguments": {
                 "name": "Jira",
-                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "config": "A1",
                 "params": {
-                    "status": "{{vars.input.records[0].status.itemValue | resolveRange(vars.soarToJiraStatusMap)}}",
+                    "status": "",
                     "comment": "SOAR Sync at {{arrow.utcnow().format(\"HH:mm:ss DD\/MM\/YYYY\")}}",
                     "summary": "SOAR: {{vars.input.records[0].name}}",
                     "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severityMap)}}",
@@ -222,7 +222,7 @@
             "left": "475",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
             "group": null,
-            "uuid": "57b42d6f-e111-4d54-91c8-043323e3aef5"
+            "uuid": "0f077488-767e-412f-87fb-e763e5f158bf"
         }
     ],
     "routes": [

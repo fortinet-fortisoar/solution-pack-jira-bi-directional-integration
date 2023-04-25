@@ -5,7 +5,7 @@
     "aliasName": null,
     "tag": null,
     "description": "Playbook creates sample alert for JIRA Use Case",
-    "isActive": true,
+    "isActive": false,
     "debug": false,
     "singleRecordExecution": false,
     "remoteExecutableFlag": false,

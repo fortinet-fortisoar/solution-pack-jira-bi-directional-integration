@@ -72,14 +72,15 @@
                     {
                         "name": "jiraProjectKEY",
                         "type": "string",
-                        "label": "Jira Project KEY",
-                        "tooltip": "Specify Jira Project KEY",
+                        "label": "Jira Project Key",
+                        "tooltip": "Specify Jira Project Key",
                         "dataType": "text",
                         "formType": "text",
                         "required": true,
                         "_expanded": true,
+                        "_nameTouched": true,
                         "defaultValue": "FSR",
-                        "_previousName": "jiraProjectKEY",
+                        "_previousName": "jiraProjectKey",
                         "jinjaExpressionView": true,
                         "useRecordFieldDefault": false
                     }
@@ -122,7 +123,7 @@
                     "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
                     "tenant": "",
                     "thread": false,
-                    "content": "<p>Added corresponding ticket to Jira: <span class=\"badge badge-pill badge-danger\" style=\"background: #009d00; color: #fff;\">{{vars.steps.Create_Ticket.data.id}}<\/span><\/p>",
+                    "content": "<p>Added corresponding ticket to Jira: <span style=\"background: #009d00; color: #fff;\" class=\"badge badge-pill badge-danger\">{{vars.steps.Create_Ticket.data.id}}<\/span><\/p>",
                     "records": "{{vars.input.records[0]['@id']}}"
                 },
                 "resource": {

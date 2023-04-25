@@ -17,11 +17,27 @@
     "steps": [
         {
             "@type": "WorkflowStep",
+            "name": "Check Alert Closed Or Not",
+            "description": null,
+            "arguments": {
+                "closedAlert": "{{vars.foundTicketID  | json_query(\"[?status == 'Done']\")}}",
+                "notClosedAlert": "{{vars.foundTicketID  | json_query(\"[?status != 'Done']\")}}"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "9c42675b-1a00-4ca2-b4fd-db23c60db962"
+        },
+        {
+            "@type": "WorkflowStep",
             "name": "Close Alerts",
             "description": null,
             "arguments": {
+                "when": "{{vars.closedAlert | length > 0}}",
                 "for_each": {
-                    "item": "{{vars.foundTicketID}}",
+                    "item": "{{vars.closedAlert}}",
                     "__bulk": true,
                     "parallel": false,
                     "condition": "",
@@ -43,8 +59,8 @@
                 "step_variables": []
             },
             "status": null,
-            "top": "705",
-            "left": "475",
+            "top": "840",
+            "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
             "group": null,
             "uuid": "d4de6a24-7c29-4e52-b349-93ac664b724d"
@@ -59,7 +75,7 @@
             },
             "status": null,
             "top": "165",
-            "left": "300",
+            "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
             "group": null,
             "uuid": "bc0f9ecb-bbbb-4c7e-94e3-8d3f06fd64c2"
@@ -111,7 +127,7 @@
             },
             "status": null,
             "top": "435",
-            "left": "300",
+            "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
             "group": null,
             "uuid": "1f25fe11-b424-4cb2-9e47-d34caad2d0ab"
@@ -142,37 +158,10 @@
             },
             "status": null,
             "top": "300",
-            "left": "300",
+            "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
             "group": null,
             "uuid": "df8780f6-3ddf-48d1-9e45-028897653a95"
-        },
-        {
-            "@type": "WorkflowStep",
-            "name": "Is Alert Close",
-            "description": null,
-            "arguments": {
-                "conditions": [
-                    {
-                        "option": "Yes",
-                        "step_iri": "\/api\/3\/workflow_steps\/d4de6a24-7c29-4e52-b349-93ac664b724d",
-                        "condition": "{{ 'Done' in vars.foundTicketID | json_query('[*][\"status\"][]') }}",
-                        "step_name": "Close Alerts"
-                    },
-                    {
-                        "option": "No",
-                        "step_iri": "\/api\/3\/workflow_steps\/43baf2cb-b845-4684-b5cb-b3f418d6627c",
-                        "condition": "{{ vars.steps.Find_Alerts | flatten | length > 0 }}",
-                        "step_name": "Update Alert"
-                    }
-                ]
-            },
-            "status": null,
-            "top": "570",
-            "left": "300",
-            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
-            "group": null,
-            "uuid": "325c526b-11fc-45cb-a996-d3d5f25d99e7"
         },
         {
             "@type": "WorkflowStep",
@@ -188,14 +177,15 @@
                     {
                         "name": "jiraProjectKEY",
                         "type": "string",
-                        "label": "Jira Project KEY",
+                        "label": "Jira Project Key",
                         "tooltip": "Specify Jira Project KEY",
                         "dataType": "text",
                         "formType": "text",
                         "required": true,
-                        "_expanded": false,
+                        "_expanded": true,
+                        "_nameTouched": true,
                         "defaultValue": "FSR",
-                        "_previousName": "jira",
+                        "_previousName": "jiraProjectKey",
                         "jinjaExpressionView": true,
                         "useRecordFieldDefault": false
                     },
@@ -209,12 +199,12 @@
                         "dataType": "integer",
                         "formType": "integer",
                         "required": false,
-                        "_expanded": true,
+                        "_expanded": false,
                         "mmdUpdate": true,
                         "collection": false,
                         "searchable": true,
                         "templateUrl": "app\/components\/form\/fields\/integer.html",
-                        "defaultValue": 0,
+                        "defaultValue": null,
                         "_previousName": "startAt",
                         "playbookField": true,
                         "lengthConstraint": true,
@@ -279,7 +269,7 @@
             },
             "status": null,
             "top": "30",
-            "left": "300",
+            "left": "125",
             "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
             "group": null,
             "uuid": "8c6b0412-5a89-4f76-8522-4f0677499ccc"
@@ -289,9 +279,11 @@
             "name": "Update Alert",
             "description": null,
             "arguments": {
+                "when": "{{vars.notClosedAlert | length > 0}}",
                 "for_each": {
-                    "item": "{{vars.foundTicketID}}",
+                    "item": "{{vars.notClosedAlert}}",
                     "__bulk": true,
+                    "parallel": false,
                     "condition": "",
                     "batch_size": 100
                 },
@@ -316,23 +308,13 @@
     "routes": [
         {
             "@type": "WorkflowRoute",
-            "name": "Check If Alert Is Closed -> Update Alert",
+            "name": "Check Alert Closed Or Not -> Update Alert",
             "targetStep": "\/api\/3\/workflow_steps\/43baf2cb-b845-4684-b5cb-b3f418d6627c",
-            "sourceStep": "\/api\/3\/workflow_steps\/325c526b-11fc-45cb-a996-d3d5f25d99e7",
-            "label": "No",
+            "sourceStep": "\/api\/3\/workflow_steps\/9c42675b-1a00-4ca2-b4fd-db23c60db962",
+            "label": null,
             "isExecuted": false,
             "group": null,
-            "uuid": "bc651423-5497-473f-bc50-af42c0b5309d"
-        },
-        {
-            "@type": "WorkflowRoute",
-            "name": "Check If Alert Is Closed -> Update Alerts",
-            "targetStep": "\/api\/3\/workflow_steps\/d4de6a24-7c29-4e52-b349-93ac664b724d",
-            "sourceStep": "\/api\/3\/workflow_steps\/325c526b-11fc-45cb-a996-d3d5f25d99e7",
-            "label": "Yes",
-            "isExecuted": false,
-            "group": null,
-            "uuid": "b0cf9426-e205-4e09-b716-8673aa134c24"
+            "uuid": "5eb07f3f-611c-47ba-bc6e-9adb9797cbad"
         },
         {
             "@type": "WorkflowRoute",
@@ -346,13 +328,13 @@
         },
         {
             "@type": "WorkflowRoute",
-            "name": "Find Alerts -> Check If Alert Is Closed",
-            "targetStep": "\/api\/3\/workflow_steps\/325c526b-11fc-45cb-a996-d3d5f25d99e7",
+            "name": "Find Alerts -> Check Alert Closed Or Not",
+            "targetStep": "\/api\/3\/workflow_steps\/9c42675b-1a00-4ca2-b4fd-db23c60db962",
             "sourceStep": "\/api\/3\/workflow_steps\/1f25fe11-b424-4cb2-9e47-d34caad2d0ab",
             "label": null,
             "isExecuted": false,
             "group": null,
-            "uuid": "a4533234-833a-4c7e-8731-55e97f5d1428"
+            "uuid": "d6833908-7b17-4408-9933-26ad5ba0b988"
         },
         {
             "@type": "WorkflowRoute",
@@ -373,6 +355,16 @@
             "isExecuted": false,
             "group": null,
             "uuid": "2a99e1af-0e12-4f92-8ff2-6a5a2cbe8bde"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Alert -> Close Alerts",
+            "targetStep": "\/api\/3\/workflow_steps\/d4de6a24-7c29-4e52-b349-93ac664b724d",
+            "sourceStep": "\/api\/3\/workflow_steps\/43baf2cb-b845-4684-b5cb-b3f418d6627c",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "4ede40fc-e879-4e9f-aab3-9bf6adf7b8be"
         }
     ],
     "groups": [],

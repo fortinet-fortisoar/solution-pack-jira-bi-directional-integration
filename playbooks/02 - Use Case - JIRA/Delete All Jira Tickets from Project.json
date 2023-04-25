@@ -165,6 +165,36 @@
         },
         {
             "@type": "WorkflowStep",
+            "name": "Set Jira Ticket",
+            "description": null,
+            "arguments": {
+                "for_each": {
+                    "item": "{{vars.steps.Get_All_Alert_For_Ticket_ID | flatten}}",
+                    "__bulk": true,
+                    "condition": "",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "jiraTicketID": "null"
+                },
+                "operation": "Append",
+                "collection": "{{vars.item['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "109f14cd-4d56-431e-a4af-2f41a089fb8f"
+        },
+        {
+            "@type": "WorkflowStep",
             "name": "Start",
             "description": null,
             "arguments": {
@@ -275,6 +305,16 @@
         }
     ],
     "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Add Deleting Ticket Comment On Alert -> Set Jira Ticket",
+            "targetStep": "\/api\/3\/workflow_steps\/109f14cd-4d56-431e-a4af-2f41a089fb8f",
+            "sourceStep": "\/api\/3\/workflow_steps\/ea7d884d-dd12-4daa-ab88-a791296a922e",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "961fe936-74be-4a6a-a2c6-d52d8fb95f80"
+        },
         {
             "@type": "WorkflowRoute",
             "name": "Configuration -> Get Existing Tickets",
