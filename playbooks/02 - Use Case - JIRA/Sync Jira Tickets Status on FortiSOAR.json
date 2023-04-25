@@ -1,0 +1,381 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Sync Jira Tickets Status on FortiSOAR",
+    "aliasName": null,
+    "tag": "#Jira",
+    "description": "Update FortiSOAR Alert Status as per Jira Status",
+    "isActive": false,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/8c6b0412-5a89-4f76-8522-4f0677499ccc",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Check Alert Closed Or Not",
+            "description": null,
+            "arguments": {
+                "closedAlert": "{{vars.foundTicketID  | json_query(\"[?status == 'Done']\")}}",
+                "notClosedAlert": "{{vars.foundTicketID  | json_query(\"[?status != 'Done']\")}}"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "9c42675b-1a00-4ca2-b4fd-db23c60db962"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Close Alerts",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.closedAlert | length > 0}}",
+                "for_each": {
+                    "item": "{{vars.closedAlert}}",
+                    "__bulk": true,
+                    "parallel": false,
+                    "condition": "",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "status": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                    "closureNotes": "Alert closed due to its corresponding ticket closed on Jira",
+                    "closureReason": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.item['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "d4de6a24-7c29-4e52-b349-93ac664b724d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "statusMap": "{\n\"Work in progress\":\"Investigating\",\n\"Open\":\"Open\",\n\"Reopened\":\"Re-Opened\",\n\"Pending\":\"Pending\",\n\"Done\":\"Closed\"\n}",
+                "useMockOutput": "{{globalVars.Demo_mode}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "bc0f9ecb-bbbb-4c7e-94e3-8d3f06fd64c2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Find Alerts",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "jiraTicketID",
+                            "value": "{{vars.item.id}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        },
+                        {
+                            "type": "object",
+                            "field": "status",
+                            "value": "{{\"AlertStatus\" | picklist(vars.item['status'] | resolveRange(vars.statusMap) , \"@id\")}}",
+                            "_value": {
+                                "@id": "{{\"AlertStatus\" | picklist(vars.item['status'] | resolveRange(vars.statusMap) , \"@id\")}}",
+                                "display": "",
+                                "itemValue": ""
+                            },
+                            "operator": "neq"
+                        }
+                    ],
+                    "__selectFields": [
+                        "jiraTicketID",
+                        "id"
+                    ]
+                },
+                "module": "alerts?$limit=30",
+                "for_each": {
+                    "item": "{{vars.foundTicketID}}",
+                    "parallel": false,
+                    "condition": ""
+                },
+                "checkboxFields": true,
+                "step_variables": {
+                    "__dummy": "{% for item in vars.foundTicketID %}{% for alert in vars.steps.Find_Alerts | flatten %}{% if item.id == alert.jiraTicketID %}{% set _ = item.update({'@id':alert['@id']}) %}{% endif %}{% endfor %}{% endfor %}"
+                }
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "1f25fe11-b424-4cb2-9e47-d34caad2d0ab"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Existing Tickets",
+            "description": null,
+            "arguments": {
+                "name": "Jira",
+                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "params": {
+                    "fields": "",
+                    "status": "",
+                    "startAt": "{% if vars.input.params.startAt %}{{vars.input.params.startAt}}{% else %}\"0\"{% endif %}",
+                    "maxResults": "{% if vars.input.params.maxResult %}{{vars.input.params.maxResult}}{% else %}\"50\"{% endif %}",
+                    "project_key": "{{vars.input.params.jiraProjectKEY}}"
+                },
+                "version": "1.1.1",
+                "connector": "jira",
+                "operation": "list_tickets",
+                "mock_result": "{\n  \"data\": {\n    \"total\": 1,\n    \"expand\": \"schema,names\",\n    \"issues\": [\n      {\n        \"id\": \"10010\",\n        \"key\": \"FSR-10\",\n        \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/10010\",\n        \"expand\": \"operations,versionedRepresentations,editmeta,changelog,customfield_10010.requestTypePractice,renderedFields\",\n        \"fields\": {\n          \"votes\": {\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/FSR-10\/votes\",\n            \"votes\": 0,\n            \"hasVoted\": false\n          },\n          \"labels\": [],\n          \"status\": {\n            \"id\": \"10016\",\n            \"name\": \"Work in progress\",\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/status\/10016\",\n            \"iconUrl\": \"https:\/\/demo.atlassian.net\/images\/icons\/status_generic.gif\",\n            \"description\": \"This was auto-generated by Jira Service Management during workflow import\",\n            \"statusCategory\": {\n              \"id\": 4,\n              \"key\": \"indeterminate\",\n              \"name\": \"In Progress\",\n              \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/statuscategory\/4\",\n              \"colorName\": \"yellow\"\n            }\n          },\n          \"created\": \"2023-04-19T16:59:31.686+0530\",\n          \"creator\": {\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/user?accountId=62b630a05419e75d231e279a\",\n            \"active\": true,\n            \"timeZone\": \"Asia\/Calcutta\",\n            \"accountId\": \"62b630a05419e75d231e279a\",\n            \"avatarUrls\": {\n              \"16x16\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"24x24\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"32x32\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"48x48\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\"\n            },\n            \"accountType\": \"atlassian\",\n            \"displayName\": \"Demo\",\n            \"emailAddress\": \"demo@gmail.com\"\n          },\n          \"duedate\": \"2023-04-19\",\n          \"project\": {\n            \"id\": \"10000\",\n            \"key\": \"FSR\",\n            \"name\": \"fsr\",\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/project\/10000\",\n            \"avatarUrls\": {\n              \"16x16\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/universal_avatar\/view\/type\/project\/avatar\/10425?size=xsmall\",\n              \"24x24\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/universal_avatar\/view\/type\/project\/avatar\/10425?size=small\",\n              \"32x32\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/universal_avatar\/view\/type\/project\/avatar\/10425?size=medium\",\n              \"48x48\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/universal_avatar\/view\/type\/project\/avatar\/10425\"\n            },\n            \"simplified\": false,\n            \"projectTypeKey\": \"service_desk\"\n          },\n          \"summary\": \"SOAR: Unable to log into VPN\",\n          \"updated\": \"2023-04-19T17:09:25.640+0530\",\n          \"watches\": {\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/FSR-10\/watchers\",\n            \"isWatching\": true,\n            \"watchCount\": 1\n          },\n          \"assignee\": {\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/user?accountId=62b630a05419e75d231e279a\",\n            \"active\": true,\n            \"timeZone\": \"Asia\/Calcutta\",\n            \"accountId\": \"62b630a05419e75d231e279a\",\n            \"avatarUrls\": {\n              \"16x16\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"24x24\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"32x32\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"48x48\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\"\n            },\n            \"accountType\": \"atlassian\",\n            \"displayName\": \"Demo\",\n            \"emailAddress\": \"demo@gmail.com\"\n          },\n          \"priority\": {\n            \"id\": \"3\",\n            \"name\": \"Medium\",\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/priority\/3\",\n            \"iconUrl\": \"https:\/\/demo.atlassian.net\/images\/icons\/priorities\/medium.svg\"\n          },\n          \"progress\": {\n            \"total\": 0,\n            \"progress\": 0\n          },\n          \"reporter\": {\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/user?accountId=62b630a05419e75d231e279a\",\n            \"active\": true,\n            \"timeZone\": \"Asia\/Calcutta\",\n            \"accountId\": \"62b630a05419e75d231e279a\",\n            \"avatarUrls\": {\n              \"16x16\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"24x24\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"32x32\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n              \"48x48\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\"\n            },\n            \"accountType\": \"atlassian\",\n            \"displayName\": \"Demo\",\n            \"emailAddress\": \"demo@gmail.com\"\n          },\n          \"security\": null,\n          \"subtasks\": [],\n          \"versions\": [],\n          \"issuetype\": {\n            \"id\": \"10008\",\n            \"name\": \"Task\",\n            \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issuetype\/10008\",\n            \"iconUrl\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/universal_avatar\/view\/type\/issuetype\/avatar\/10557?size=medium\",\n            \"subtask\": false,\n            \"avatarId\": 10557,\n            \"description\": \"A task that needs to be done.\",\n            \"hierarchyLevel\": 0\n          },\n          \"timespent\": null,\n          \"workratio\": -1,\n          \"components\": [],\n          \"issuelinks\": [],\n          \"lastViewed\": null,\n          \"resolution\": null,\n          \"description\": \"Reporting issue where our team is unable to log into India VPN.\\n\\n\",\n          \"environment\": null,\n          \"fixVersions\": [],\n          \"timeestimate\": null,\n          \"resolutiondate\": null,\n          \"aggregateprogress\": {\n            \"total\": 0,\n            \"progress\": 0\n          },\n          \"customfield_10001\": null,\n          \"customfield_10002\": [],\n          \"customfield_10003\": null,\n          \"customfield_10004\": null,\n          \"customfield_10005\": null,\n          \"customfield_10006\": null,\n          \"customfield_10007\": null,\n          \"customfield_10008\": null,\n          \"customfield_10009\": null,\n          \"customfield_10010\": null,\n          \"customfield_10014\": null,\n          \"customfield_10015\": null,\n          \"customfield_10016\": null,\n          \"customfield_10017\": null,\n          \"customfield_10018\": {\n            \"showField\": false,\n            \"nonEditableReason\": {\n              \"reason\": \"PLUGIN_LICENSE_ERROR\",\n              \"message\": \"The Parent Link is only available to Jira Premium users.\"\n            },\n            \"hasEpicLinkFieldDependency\": false\n          },\n          \"customfield_10019\": \"0|i0003b:\",\n          \"customfield_10020\": null,\n          \"customfield_10021\": null,\n          \"customfield_10022\": null,\n          \"customfield_10023\": null,\n          \"customfield_10024\": null,\n          \"customfield_10025\": null,\n          \"customfield_10026\": null,\n          \"customfield_10027\": null,\n          \"customfield_10028\": null,\n          \"customfield_10029\": null,\n          \"customfield_10030\": null,\n          \"customfield_10031\": null,\n          \"customfield_10032\": null,\n          \"customfield_10033\": [],\n          \"customfield_10034\": null,\n          \"customfield_10035\": null,\n          \"customfield_10036\": {\n            \"displayName\": \"English\",\n            \"languageCode\": \"en\"\n          },\n          \"customfield_10037\": null,\n          \"customfield_10038\": null,\n          \"customfield_10039\": null,\n          \"customfield_10040\": null,\n          \"customfield_10041\": null,\n          \"customfield_10042\": null,\n          \"customfield_10043\": [],\n          \"customfield_10044\": null,\n          \"customfield_10045\": null,\n          \"customfield_10046\": null,\n          \"customfield_10047\": null,\n          \"customfield_10048\": null,\n          \"customfield_10049\": null,\n          \"customfield_10050\": null,\n          \"customfield_10051\": null,\n          \"customfield_10052\": null,\n          \"customfield_10053\": null,\n          \"customfield_10055\": {\n            \"id\": \"1\",\n            \"name\": \"Time to resolution\",\n            \"_links\": {\n              \"self\": \"https:\/\/demo.atlassian.net\/rest\/servicedeskapi\/request\/10010\/sla\/1\"\n            },\n            \"completedCycles\": []\n          },\n          \"customfield_10056\": {\n            \"id\": \"2\",\n            \"name\": \"Time to first response\",\n            \"_links\": {\n              \"self\": \"https:\/\/demo.atlassian.net\/rest\/servicedeskapi\/request\/10010\/sla\/2\"\n            },\n            \"completedCycles\": []\n          },\n          \"customfield_10057\": {\n            \"id\": \"3\",\n            \"name\": \"Time to close after resolution\",\n            \"_links\": {\n              \"self\": \"https:\/\/demo.atlassian.net\/rest\/servicedeskapi\/request\/10010\/sla\/3\"\n            },\n            \"completedCycles\": []\n          },\n          \"customfield_10058\": {\n            \"id\": \"4\",\n            \"name\": \"Time to review normal change\",\n            \"_links\": {\n              \"self\": \"https:\/\/demo.atlassian.net\/rest\/servicedeskapi\/request\/10010\/sla\/4\"\n            },\n            \"completedCycles\": []\n          },\n          \"customfield_10059\": null,\n          \"customfield_10060\": null,\n          \"aggregatetimespent\": null,\n          \"timeoriginalestimate\": null,\n          \"aggregatetimeestimate\": null,\n          \"statuscategorychangedate\": \"2023-04-19T17:02:15.288+0530\",\n          \"aggregatetimeoriginalestimate\": null\n        }\n      }\n    ],\n    \"startAt\": 0,\n    \"maxResults\": 50\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"1 seconds 788 ms\"\n}",
+                "operationTitle": "List Tickets",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "foundTicketID": "{% set _data = [] %}{% for item in  vars.steps.Get_Existing_Tickets.data.issues %}{% set _ = _data.append({'id':item.id, 'status':item.fields.status.name}) %}{% endfor %}{{_data}}"
+                }
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "df8780f6-3ddf-48d1-9e45-028897653a95"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "e1d62bba-b427-4cac-9afe-8e7be3c673a6",
+                "title": "Jira: Sync Jira Ticket Status",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [
+                    {
+                        "name": "jiraProjectKEY",
+                        "type": "string",
+                        "label": "Jira Project Key",
+                        "tooltip": "Specify Jira Project KEY",
+                        "dataType": "text",
+                        "formType": "text",
+                        "required": true,
+                        "_expanded": true,
+                        "_nameTouched": true,
+                        "defaultValue": "FSR",
+                        "_previousName": "jiraProjectKey",
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    },
+                    {
+                        "name": "startAt",
+                        "type": "integer",
+                        "label": "Start At",
+                        "title": "Integer Field",
+                        "usable": true,
+                        "tooltip": "Start Index.",
+                        "dataType": "integer",
+                        "formType": "integer",
+                        "required": false,
+                        "_expanded": false,
+                        "mmdUpdate": true,
+                        "collection": false,
+                        "searchable": true,
+                        "templateUrl": "app\/components\/form\/fields\/integer.html",
+                        "defaultValue": null,
+                        "_previousName": "startAt",
+                        "playbookField": true,
+                        "lengthConstraint": true,
+                        "allowedEncryption": false,
+                        "allowedGridColumn": true,
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    },
+                    {
+                        "name": "maxResult",
+                        "type": "integer",
+                        "label": "Max Result",
+                        "title": "Integer Field",
+                        "usable": true,
+                        "tooltip": "Maximum number of tickets to be fetched",
+                        "dataType": "integer",
+                        "formType": "integer",
+                        "required": false,
+                        "_expanded": false,
+                        "mmdUpdate": true,
+                        "collection": false,
+                        "searchable": true,
+                        "templateUrl": "app\/components\/form\/fields\/integer.html",
+                        "defaultValue": 50,
+                        "_previousName": "maxResult",
+                        "playbookField": true,
+                        "lengthConstraint": true,
+                        "allowedEncryption": false,
+                        "allowedGridColumn": true,
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    }
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "startAt": "{{vars.request.data[\"startAt\"]}}",
+                            "maxResult": "{{vars.request.data[\"maxResult\"]}}",
+                            "jiraProjectKEY": "{{vars.request.data[\"jiraProjectKEY\"]}}"
+                        },
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "_promptexpanded": true,
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    },
+                    "incidents": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "8c6b0412-5a89-4f76-8522-4f0677499ccc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.notClosedAlert | length > 0}}",
+                "for_each": {
+                    "item": "{{vars.notClosedAlert}}",
+                    "__bulk": true,
+                    "parallel": false,
+                    "condition": "",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "status": "{{\"AlertStatus\" | picklist(vars.item.status | resolveRange(vars.statusMap), \"@id\")}}"
+                },
+                "operation": "Append",
+                "collection": "{{vars.item['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "43baf2cb-b845-4684-b5cb-b3f418d6627c"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Check Alert Closed Or Not -> Update Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/43baf2cb-b845-4684-b5cb-b3f418d6627c",
+            "sourceStep": "\/api\/3\/workflow_steps\/9c42675b-1a00-4ca2-b4fd-db23c60db962",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "5eb07f3f-611c-47ba-bc6e-9adb9797cbad"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Existing Tickets",
+            "targetStep": "\/api\/3\/workflow_steps\/df8780f6-3ddf-48d1-9e45-028897653a95",
+            "sourceStep": "\/api\/3\/workflow_steps\/bc0f9ecb-bbbb-4c7e-94e3-8d3f06fd64c2",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "74db927d-cf7c-4a22-b219-0c863f3b543b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Find Alerts -> Check Alert Closed Or Not",
+            "targetStep": "\/api\/3\/workflow_steps\/9c42675b-1a00-4ca2-b4fd-db23c60db962",
+            "sourceStep": "\/api\/3\/workflow_steps\/1f25fe11-b424-4cb2-9e47-d34caad2d0ab",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "d6833908-7b17-4408-9933-26ad5ba0b988"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Existing Tickets -> Find Alerts",
+            "targetStep": "\/api\/3\/workflow_steps\/1f25fe11-b424-4cb2-9e47-d34caad2d0ab",
+            "sourceStep": "\/api\/3\/workflow_steps\/df8780f6-3ddf-48d1-9e45-028897653a95",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "b8770617-3aea-4cf0-9127-dd4fe5a0e8cc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Incidents -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/bc0f9ecb-bbbb-4c7e-94e3-8d3f06fd64c2",
+            "sourceStep": "\/api\/3\/workflow_steps\/8c6b0412-5a89-4f76-8522-4f0677499ccc",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2a99e1af-0e12-4f92-8ff2-6a5a2cbe8bde"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Alert -> Close Alerts",
+            "targetStep": "\/api\/3\/workflow_steps\/d4de6a24-7c29-4e52-b349-93ac664b724d",
+            "sourceStep": "\/api\/3\/workflow_steps\/43baf2cb-b845-4684-b5cb-b3f418d6627c",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "4ede40fc-e879-4e9f-aab3-9bf6adf7b8be"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "cc66ded3-7745-4f80-9cdc-9d7d2adbda68",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Alert",
+        "Jira"
+    ]
+}

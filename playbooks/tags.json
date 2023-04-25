@@ -1,3 +1,9 @@
 [
-    "jira"
+    "Alert",
+    "Comment",
+    "ManualTrigger",
+    "PostCreate",
+    "PostUpdate",
+    "Jira",
+    "Scenario"
 ]

@@ -1,0 +1,193 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Create Jira Ticket",
+    "aliasName": null,
+    "tag": "#Jira",
+    "description": "Playbook creates its corresponding ticket on Jira",
+    "isActive": false,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/bef9bc64-8e7c-4916-bab9-088f637e37ab",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "severityMap": "{\n\"Critical\":\"Highest\",\n\"High\":\"High\",\n\"Medium\":\"Medium\",\n\"Low\":\"Low\",\n\"Minimal\":\"Lowest\"\n}",
+                "useMockOutput": "{{globalVars.Demo_mode}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "ebc53775-cca2-4b11-8b5a-c401ae312fc7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Ticket",
+            "description": null,
+            "arguments": {
+                "name": "Jira",
+                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "params": {
+                    "priority": "{{vars.input.records[0].severity.itemValue | resolveRange(vars.severityMap)}}",
+                    "issue_type": "Task",
+                    "project_key": "{{vars.input.params.jiraProjectKEY}}",
+                    "other_fields": "",
+                    "ticket_summary": "SOAR: {{vars.input.records[0].name}}",
+                    "ticket_description": "{%if vars.input.records[0].description%}{{vars.input.records[0].description | html2text}}{%else%}N\/A{%endif%}"
+                },
+                "version": "1.1.1",
+                "connector": "jira",
+                "operation": "create_ticket",
+                "mock_result": "{\n  \"data\": {\n    \"id\": \"10010\",\n    \"key\": \"FSR-10\",\n    \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/10010\",\n    \"status\": \"Open\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"3 seconds 242 ms\"\n}",
+                "operationTitle": "Create Ticket",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "084b54e1-3a9c-473f-bb24-17c0beb53120"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "cc220642-aea4-47be-a0f6-07ccc6baba11",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [
+                    {
+                        "name": "jiraProjectKEY",
+                        "type": "string",
+                        "label": "Jira Project Key",
+                        "tooltip": "Specify Jira Project Key",
+                        "dataType": "text",
+                        "formType": "text",
+                        "required": true,
+                        "_expanded": true,
+                        "_nameTouched": true,
+                        "defaultValue": "FSR",
+                        "_previousName": "jiraProjectKey",
+                        "jinjaExpressionView": true,
+                        "useRecordFieldDefault": false
+                    }
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "jiraProjectKEY": "{{vars.request.data[\"jiraProjectKEY\"]}}"
+                        },
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "_promptexpanded": true,
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Create Ticket",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "bef9bc64-8e7c-4916-bab9-088f637e37ab"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert With Ticket ID",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "thread": false,
+                    "content": "<p>Added corresponding ticket to Jira: <span style=\"background: #009d00; color: #fff;\" class=\"badge badge-pill badge-danger\">{{vars.steps.Create_Ticket.data.id}}<\/span><\/p>",
+                    "records": "{{vars.input.records[0]['@id']}}"
+                },
+                "resource": {
+                    "jiraTicketID": "{{vars.steps.Create_Ticket.data.id}}"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "691f2055-23cd-4ae7-b263-4c4bb0b286f4"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Ticket",
+            "targetStep": "\/api\/3\/workflow_steps\/084b54e1-3a9c-473f-bb24-17c0beb53120",
+            "sourceStep": "\/api\/3\/workflow_steps\/ebc53775-cca2-4b11-8b5a-c401ae312fc7",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "9b07175e-95f1-4c98-acd2-41b06e323a0f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Ticket -> Update Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/691f2055-23cd-4ae7-b263-4c4bb0b286f4",
+            "sourceStep": "\/api\/3\/workflow_steps\/084b54e1-3a9c-473f-bb24-17c0beb53120",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "34dafbd7-1415-48df-aae7-9afd65c75891"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/ebc53775-cca2-4b11-8b5a-c401ae312fc7",
+            "sourceStep": "\/api\/3\/workflow_steps\/bef9bc64-8e7c-4916-bab9-088f637e37ab",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "e45caa3a-9b58-4ee4-8d14-84985efd8bd3"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "870587d4-9cb4-42eb-b115-ada61c2333c3",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Alert",
+        "Jira"
+    ]
+}
