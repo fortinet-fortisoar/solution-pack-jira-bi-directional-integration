@@ -7,6 +7,13 @@
 2. From the list of solution pack that appears, search for and select **Jira**.
 3. Click the **Jira** solution pack card.4. Click **Install** on the lower part of the screen to begin the installation.
 
+# Prerequisites
+
+The **Jira** solution pack depends on the following solution packs that are installed automatically &ndash; if not already installed.
+
+| Solution Pack Name | Version | Purpose   |
+| :--------------------- | :---------------------| :--------------------------------------- |
+| SOC Simulator | v1.0.1 or later | Required for Scenario Module and SOC Simulator connector |
 
 # Configuration
 For optimal performance of **Jira** solution pack, you can install and configure the connectors that help with the following:
