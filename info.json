@@ -1,10 +1,10 @@
 {
-    "name": "jira",
+    "name": "jiraBi-Directions",
     "version": "1.0.0",
     "fsrMinCompatibility": "7.3.0",
     "type": "solutionpack",
     "local": true,
-    "label": "Jira",
+    "label": "Jira Bi-Directions",
     "dependencies": [],
     "prerequisite": null,
     "publisher": "Community",
@@ -19,7 +19,7 @@
     "supportInfo": null,
     "iconLarge": null,
     "postInstallConfig": null,
-    "date": "2023-04-19T11:09:40+00:00",
+    "date": "2023-04-25T10:12:35+00:00",
     "contents": {
         "modules": {
             "": {
