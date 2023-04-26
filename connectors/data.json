@@ -1,0 +1,13 @@
+[
+    {
+        "name": "jira",
+        "label": "Jira",
+        "category": "Ticket Creation",
+        "description": "Jira Service Desk Connector for issue creating, updating and deleting",
+        "publisher": null,
+        "operation_roles": [],
+        "configurations": [],
+        "dataImports": [],
+        "install_mode": "rpm"
+    }
+]

@@ -1,0 +1,30 @@
+[
+    {
+        "@type": "Scenario",
+        "configuration": null,
+        "title": "Jira Bi-Direction",
+        "description": "This scenario demonstrates the Jira use case which includes creation of Alerts as \"Unable to log into VPN\" ",
+        "steps": {
+            "Steps": [
+                {
+                    "name": "Jira",
+                    "type": "executePlaybook",
+                    "playbookIRI": "\/api\/3\/workflows\/54766700-cc2a-467a-b468-1e2d8f28a629",
+                    "preCreateMessage": "Creating demo record for Jira",
+                    "postCreateMessage": "",
+                    "waitTimeforNextStep": "0"
+                }
+            ]
+        },
+        "createdAlertsID": null,
+        "uuid": "1a14c181-e543-44e5-a90b-5661ef17cc52",
+        "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+        "createDate": 1681903007.904288,
+        "modifyUser": "\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63",
+        "modifyDate": 1682421103.727103,
+        "id": 9,
+        "recordTags": [
+            "Jira"
+        ]
+    }
+]
