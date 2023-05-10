@@ -19,9 +19,9 @@ Before you begin the simulation mode, make the following changes within the Fort
 
 2. Open the playbook collection **02-Use Case-jira** and select all the containing playbooks. Click the **Activate** button to activate all the selected playbooks.
 
-**Jira Bi-Directions** solution pack includes a scenario that helps you get a better understanding of how the solution pack functions.
+**Bi-Directional Jira Sync** solution pack includes a scenario that helps you get a better understanding of how the solution pack functions.
 
-1. Browse to *Simulations* and select the *Jira Bi-Directions* scenario.
+1. Browse to *Simulations* and select the *Bi-Directional Jira Sync* scenario.
 
 2. Click **Simulate Scenario**. This scenario adds an alert *Unable to log into VPN* with severity set to *Medium*.
 
@@ -45,7 +45,7 @@ Before you begin the environment mode, make the following changes within the For
 
 2. Open the playbook collection **02-Use Case-jira** and select all the containing playbooks. Click the **Activate** button to activate all the selected playbooks.
 
-**Jira Bi-Directions** solution pack contains playbooks that help in the following:
+**Bi-Directional Jira Sync** solution pack contains playbooks that help in the following:
 
 - Trigger the playbook **Create Jira Ticket** on an alert to generate a corresponding *Issue* in Jira.
 
