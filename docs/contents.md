@@ -3,7 +3,7 @@
 
 # Contents
 
-The **Jira Bi-Directions** solution pack contains the following resources.
+The **Bi-Directional Jira Sync** solution pack contains the following resources.
 
 ## Module Schema
 

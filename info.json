@@ -1,10 +1,10 @@
 {
     "name": "jiraBi-Directions",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "fsrMinCompatibility": "7.3.0",
     "type": "solutionpack",
     "local": true,
-    "label": "Jira Bi-Directions",
+    "label": "Bi-Directional Jira Sync",
     "dependencies": [
         {
             "name": "socSimulator",
@@ -16,7 +16,7 @@
     "prerequisite": null,
     "publisher": "Community",
     "description": "This solution pack is aimed at organizations whom prefer to keep SOC incident management on JIRA while leveraging the automation and orchestration capability of FortiSOAR.",
-    "help": "https://github.com/fortinet-fortisoar/solution-pack-jira-bi-directional-integration/blob/release/1.0.0/docs/README.md",
+    "help": "https://github.com/fortinet-fortisoar/solution-pack-jira-bi-directional-integration/blob/release/1.0.1/README.md",
     "category": [
         "Monitoring",
         "IT Services",
