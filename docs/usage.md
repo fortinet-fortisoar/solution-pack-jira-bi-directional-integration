@@ -3,35 +3,67 @@
 
 # Usage
 
-This solution pack helps you to understand the steps FortiSOAR takes to respond to organisations that choose to keep SOC incident management on JIRA while utilising FortiSOAR's automation and orchestration capabilities. To discover how this solution bundle automation satisfies your needs, see the section [Jira](#jira).
+The Jira bi-directional integration solution pack helps organizations keep SOC incident management on JIRA while utilizing FortiSOAR&trade;'s automation and orchestration capabilities. To discover how this solution bundle automation satisfies your needs, see the following section.
 
-# Jira
+Jira solution pack functions in two modes:
 
-## Simulation Mode:
+- **Simulation Mode**: This mode helps experience Jira solution pack by creating example records that do not affect the Jira environment.
 
-> **Note** Mark the global variable `Demo_mode` as `True` and mark all the playbook under collection **02-Use Case-jira** as `Active.`
+- **Environment Mode**: This mode is for using Jira solution pack in a Jira environment.
 
-The simulation mode has one sample data **Jira** that helps you get a better understanding of how the solution pack functions. Following steps help you use the solution pack with some included sample data.
+## Simulation Mode
 
-- Browse to `Simulations` > `Jira` scenario and click **Simulate Scenario**.
-- This scenario adds alert `Unable to log into VPN` as severity `Medium`.
-- Open Alert module and execute playbook **Create Jira Ticket**. Specify `Jira Project Key` as in which you want to add this alert.
-- Jira tickets are updated when the `Status`, `Severity`, or `Description` are changed.
-- As soon as a comment or reply is added to an alert, Jira ticket data is synced.
-- To sync the ticket status with the alert status, tigger **Jira: Sync Jira Ticket Status** playbook from Alert's `Execute`, entering the values for field `Jira Project KEY,` `Start At,` and `Max Result`.
-- To delete all Jira ticket, trigger **Delete All Jira Tickets from Project** playbook from Alert's `Execute`, entering the values for field `Jira Project KEY,` `Start At,` and `Max Result`.
+Before you begin the simulation mode, make the following changes within the FortiSOAR&trade; instance:
 
-## Environment Mode:
+1. Change the value of the global variable `Demo_mode` to `True`. For more information, refer to [Global Variables](https://docs.fortinet.com/document/fortisoar/7.2.2/playbooks-guide/488685/dynamic-values#Global_Variables) section in the *Playbooks Guide* of the FortiSOAR&trade; documentation.
 
-> **Note** Mark the global variable `Demo_mode` as `False` and mark all the playbook under collection **02-Use Case-jira** as `Active.`
+2. Open the playbook collection **02-Use Case-jira** and select all the containing playbooks. Click the **Activate** button to activate all the selected playbooks.
 
-Solution pack contains playbook which helps in following ways:
+**Jira Bi-Directions** solution pack includes a scenario that helps you get a better understanding of how the solution pack functions.
 
-* Using the playbook **Create Jira Ticket** on alert, you can generate a `Issue` in Jira with the same alert's `Severity,` `Status,` and `Description` by manually entering a value for the `Jira Project KEY.`
-* The Post Update playbook **Update Jira Ticket** on alert enables an automated sync with Jira, allowing Jira **Issue** to be updated with the relevant changes made to the alert's `Severity,` `Status,` or `Description.` Playbook requires the value for key `jiraProjectKEY` in configuration step of playbook. 
-* Playbook **Sync Alert Comment on Jira** is used to automatically update Jira **Issue** with comment whenever a new comment or reply is added to an alert.
-* A manual trigger playbook **Jira: Sync Jira Ticket Status** is utilized to update alerts status as the corresponding **Issue** in Jira. Playbook requires the value for fields `Jira Project KEY,` `Start At, ` and `Max Result` on triggering the playbook.
-* A manual trigger playbook **Jira: Delete All Jira Ticket** is implemented to delete all **Issue**(or ticket) associated with a specified project of Jira. Playbook requires the value for fields `Jira Project KEY,` `Start At, ` and `Max Result` on triggering the playbook.
+1. Browse to *Simulations* and select the *Jira Bi-Directions* scenario.
+
+2. Click **Simulate Scenario**. This scenario adds an alert *Unable to log into VPN* with severity set to *Medium*.
+
+3. Open the **Alerts** module and select the alert *Unable to log into VPN*.
+
+4. Execute the playbook **Create Jira Ticket**. Specify the *Jira Project Key* in which to add this alert.
+
+5. Jira tickets are updated when the ticket's *Severity*, *Status*, and *Description* are changed.
+
+6. Jira ticket data is synced as soon as a comment or reply is added to an alert.
+
+7. Trigger **Jira: Sync Jira Ticket Status** to sync the ticket status with the alert status in FortiSOAR&trade;. Enter values for fields *Jira Project KEY*, *Start At*, and *Max Result* when prompted.
+
+8. Trigger **Delete All Jira Tickets from Project** playbook to delete all Jira tickets. Enter values for fields *Jira Project KEY*, *Start At*, and *Max Result* when prompted.
+
+## Environment Mode
+
+Before you begin the environment mode, make the following changes within the FortiSOAR&trade; instance:
+
+1. Change the value of the global variable `Demo_mode` to `False`. For more information, refer to [Global Variables](https://docs.fortinet.com/document/fortisoar/7.2.2/playbooks-guide/488685/dynamic-values#Global_Variables) section in the *Playbooks Guide* of the FortiSOAR&trade; documentation.
+
+2. Open the playbook collection **02-Use Case-jira** and select all the containing playbooks. Click the **Activate** button to activate all the selected playbooks.
+
+**Jira Bi-Directions** solution pack contains playbooks that help in the following:
+
+- Trigger the playbook **Create Jira Ticket** on an alert to generate a corresponding *Issue* in Jira.
+
+    - Enter a value for the *Jira Project KEY* and update the Jira issue with the *Severity*, *Status*, and *Description* values contained in FortiSOAR&trade;'s alert.
+
+- Trigger the playbook **Update Jira Ticket** on an alert to sync the FortiSOAR&trade; alert with the corresponding issue in Jira.
+
+    - Enter a value for the *Jira Project KEY* and update the Jira issue with the *Severity*, *Status*, and *Description* values contained in FortiSOAR&trade;'s alert.
+
+- Trigger the playbook **Sync Alert Comment on Jira** to update the Jira issue with the comment or reply added to the corresponding FortiSOAR&trade; alert.
+
+- Trigger the playbook **Jira: Sync Jira Ticket Status** to update the Jira issue with the corresponding FortiSOAR&trade;'s alert. 
+
+    - Enter a value for the *Jira Project KEY* and update the Jira issue with the *Severity*, *Status*, and *Description* values contained in FortiSOAR&trade;'s alert.
+
+- Trigger the playbook **Jira: Delete All Jira Tickets** to delete all Jira issues associated with a project.
+
+    - Enter values for *Jira Project KEY*, *Start At*, and *Max Result* when prompted.
 
 | [Installation](./setup.md#installation) | [Configuration](./setup.md#configuration) | [Contents](./contents.md) |
 |-----------------------------------------|-------------------------------------------|---------------------------|
