@@ -15,7 +15,7 @@
     ],
     "prerequisite": null,
     "publisher": "Community",
-    "description": "This solution pack is aimed at organizations whom prefer to keep SOC incident management on JIRA while leveraging the automation and orchestration capability of FortiSOAR.",
+    "description": "Bi-Directional Jira Sync accelerates the flow of information between operations and development teams to respond and restore systems when incidents occur. FortiSOAR&trade;'s Bi-Directional Jira Sync solution pack helps keep SOC incident management on Jira while leveraging the automation and orchestration capability of FortiSOAR. ",
     "help": "https://github.com/fortinet-fortisoar/solution-pack-jira-bi-directional-integration/blob/release/1.0.1/README.md",
     "category": [
         "Monitoring",
